@@ -1,5 +1,11 @@
 <script setup>
 import { ref } from 'vue';
+import { useMemberStore } from "@/stores/member";
+import { useRouter } from "vue-router";
+
+const memberStore = useMemberStore();
+const router = useRouter();
+const { userRegist, userIdDuplicateCheck } = memberStore;
 
 const userInfo = ref({
     userId: '',
@@ -13,20 +19,24 @@ const idCheck = ref(false);
 const checkPassword = ref('');
 const massage = ref('');
 
-const onIdCheck = () => {
-    if (userInfo.userId !== 'ssafy') idCheck.value = true;
+const onIdCheck = async () => {
+    if (userInfo.value.userId === '') massage.value = 'Id 칸이 비어있습니다.'
+    else {
+        idCheck.value = await userIdDuplicateCheck(userInfo.value.userId);
+        if (idCheck.value) massage.value = "사용가능한 Id 입니다.";
+        else massage.value = "이미 사용중인 Id 입니다.";
+    }
 }
 
-const onRegist = () => {
-    console.log(userInfo.value.userPassword)
-    console.log(checkPassword.value)
+const onRegist = async () => {
     if (userInfo.value.userId === '' || !idCheck.value) massage.value = 'Id를 확인해주세요.';
     else if (userInfo.value.userName === '') massage.value = 'Name을 확인해주세요.';
     else if (userInfo.value.userPassword === '' || checkPassword.value === '' || userInfo.value.userPassword !== checkPassword.value) massage.value = 'Password를 확인해주세요.';
     else if (userInfo.value.emailId === '' || userInfo.value.emailDomain === '') massage.value = 'Email을 확인해주세요.';
     else {
-        massage.value = '';
         // 회원가입 api 통신하기
+        await userRegist(userInfo);
+        router.push({ name: "user-login" });
     }
 }
 
@@ -109,7 +119,7 @@ const onRegist = () => {
                         <div class="card-footer py-3 border-0">
                             <div class="text-center">
                                 계정이 있으신가요?
-                                <router-link :to="{ name: 'login' }">로그인</router-link>
+                                <router-link :to="{ name: 'user-login' }">로그인</router-link>
                             </div>
                         </div>
                     </div>
