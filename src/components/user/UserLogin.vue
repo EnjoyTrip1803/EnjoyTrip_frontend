@@ -14,8 +14,8 @@ const { userLogin, getUserInfo } = memberStore;
 const { changeMenuState } = useMenuStore();
 
 const loginUser = ref({
-  userId: "ssafy",
-  userPassword: "1234",
+  userId: "",
+  userPassword: "",
 });
 
 const login = async () => {
@@ -75,7 +75,7 @@ const login = async () => {
                         <div class="card-footer py-3 border-0">
                             <div class="text-center">
                                 회원가입을 하지 않으셨나요?
-                                <router-link :to="{ name: 'regist' }">회원가입</router-link>
+                                <router-link :to="{ name: 'user-join' }">회원가입</router-link>
                             </div>
                         </div>
                     </div>
