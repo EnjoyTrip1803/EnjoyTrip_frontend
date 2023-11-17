@@ -21,11 +21,14 @@ const loginUser = ref({
 const login = async () => {
     await userLogin(loginUser.value);
     let token = sessionStorage.getItem("accessToken");
-    if (isLogin) {
+    if (isLogin.value) {
+        console.log("userLogin.vue ", isLogin)
         getUserInfo(token);
         changeMenuState();
+        router.push("/");
+    } else {
+        alert('로그인에 실패하였습니다.')
     }
-    router.push("/");
 };
 </script>
 

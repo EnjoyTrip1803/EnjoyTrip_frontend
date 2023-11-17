@@ -9,6 +9,8 @@ const router = useRouter();
 const { userInfo } = storeToRefs(memberStore);
 const { userInfoModify } = memberStore;
 
+console.log(userInfo);
+
 const modifyBtnClick = () => {
   if (confirm("정말 변경하시겠습니까??") == true) {
     onModify();
@@ -19,7 +21,7 @@ const modifyBtnClick = () => {
 
 const onModify = async () => {
   await userInfoModify(userInfo);
-  router.go();
+  console.log(userInfo);
 }
 </script>
 

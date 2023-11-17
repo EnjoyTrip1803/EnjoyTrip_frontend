@@ -24,24 +24,25 @@ export const useMemberStore = defineStore("memberStore", () => {
           // console.log("data", data);
           let accessToken = data["access-token"];
           let refreshToken = data["refresh-token"];
-          console.log("accessToken", accessToken);
-          console.log("refreshToken", refreshToken);
+          // console.log("accessToken", accessToken);
+          // console.log("refreshToken", refreshToken);
           isLogin.value = true;
           isLoginError.value = false;
           isValidToken.value = true;
           sessionStorage.setItem("accessToken", accessToken);
           sessionStorage.setItem("refreshToken", refreshToken);
-          console.log("sessiontStorage에 담았다", isLogin.value);
+          // console.log("sessiontStorage에 담았다", isLogin.value);
           console.log(JSON.stringify(userInfo.value));
         } else {
-          console.log("로그인 실패했다");
           isLogin.value = false;
           isLoginError.value = true;
           isValidToken.value = false;
         }
       },
       (error) => {
-        console.error(error);
+        isLogin.value = false;
+        isLoginError.value = true;
+        isValidToken.value = false;
       }
     );
   };
