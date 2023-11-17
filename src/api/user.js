@@ -21,8 +21,17 @@ async function logout(userid, success, fail) {
   await user.get(`/logout/${userid}`).then(success).catch(fail);
 }
 
-async function regist(user, success, fail) {
-  await user.post(`/join`, user).then(success).catch(fail);
+async function duplicateCheck(userid, success, fail) {
+  user.defaults.headers["Authorization"] = sessionStorage.getItem("accessToken");
+  await user.get(`/${userid}`).then(success).catch(fail);
 }
 
-export { userConfirm, findById, tokenRegeneration, logout, regist };
+async function regist(userInfo, success, fail) {
+  await user.post(`/join`, userInfo ).then(success).catch(fail);
+}
+
+async function modify(userInfo, success, fail) { 
+  await user.put(`/modify`, userInfo).then(success).catch(fail);
+}
+
+export { userConfirm, findById, tokenRegeneration, logout, duplicateCheck, regist, modify };
