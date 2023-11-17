@@ -1,11 +1,14 @@
 <script setup>
 import { ref } from 'vue';
+import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/stores/member";
 import { useRouter } from "vue-router";
 
 const memberStore = useMemberStore();
 const router = useRouter();
+const { isDuplicate } = storeToRefs(memberStore);
 const { userRegist, userIdDuplicateCheck } = memberStore;
+const isPossible = ref(false);
 
 const userInfo = ref({
     userId: '',
@@ -15,21 +18,24 @@ const userInfo = ref({
     emailDomain: ''
 });
 
-const idCheck = ref(false);
 const checkPassword = ref('');
 const massage = ref('');
 
-const onIdCheck = async () => {
+const onIdCheck = () => {
     if (userInfo.value.userId === '') massage.value = 'Id 칸이 비어있습니다.'
     else {
-        idCheck.value = await userIdDuplicateCheck(userInfo.value.userId);
-        if (idCheck.value) massage.value = "사용가능한 Id 입니다.";
-        else massage.value = "이미 사용중인 Id 입니다.";
+        idCheck();
+        isPossible.value = true;
     }
 }
 
+const idCheck = async () => {
+    await userIdDuplicateCheck(userInfo.value.userId);
+}
+
 const onRegist = async () => {
-    if (userInfo.value.userId === '' || !idCheck.value) massage.value = 'Id를 확인해주세요.';
+    console.log(isDuplicate.value);
+    if (userInfo.value.userId === '' || !isDuplicate.value) massage.value = 'Id를 확인해주세요.';
     else if (userInfo.value.userName === '') massage.value = 'Name을 확인해주세요.';
     else if (userInfo.value.userPassword === '' || checkPassword.value === '' || userInfo.value.userPassword !== checkPassword.value) massage.value = 'Password를 확인해주세요.';
     else if (userInfo.value.emailId === '' || userInfo.value.emailDomain === '') massage.value = 'Email을 확인해주세요.';
@@ -52,7 +58,7 @@ const onRegist = async () => {
                     <div class="card shadow-lg">
                         <div class="card-body p-5">
                             <h1 class="fs-4 card-title fw-bold mb-4">회원가입</h1>
-                            <form>
+                            <form @submit.prevent="onSubmit">
                                 <div class="mb-3">
                                     <label class="mb-2 text-muted" for="userId">Id</label>
                                     <input id="userId" type="id" class="form-control" name="userId"
@@ -60,6 +66,8 @@ const onRegist = async () => {
                                     <button class="btn btn-primary ms-auto" @click="onIdCheck">
                                         아이디 확인
                                     </button>
+                                    <span class="" v-if="!isDuplicate && isPossible">이미 사용중인 Id입니다.</span>
+                                    <span class="" v-if="isDuplicate && isPossible">사용가능한 Id입니다.</span>
                                 </div>
                                 <div class="mb-3">
                                     <div class="mb-2 w-100">
@@ -85,6 +93,7 @@ const onRegist = async () => {
 
                                 <div class="mb-3">
                                     <div class="mb-2 w-100">
+                                        <label class="text-muted" for="email">Email</label>
                                         <input id="email" name="email" type="text" class="form-control w-45"
                                             placeholder="이메일아이디..." v-model="userInfo.emailId" required>
                                         <span class="input-group-text">@</span>

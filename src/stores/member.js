@@ -3,7 +3,7 @@ import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
 import { jwtDecode } from "jwt-decode";
 
-import { userConfirm, findById, tokenRegeneration, logout, regist } from "@/api/user";
+import { userConfirm, findById, tokenRegeneration, logout, duplicateCheck, regist, modify } from "@/api/user";
 import { httpStatusCode } from "@/util/http-status";
 
 export const useMemberStore = defineStore("memberStore", () => {
@@ -13,6 +13,7 @@ export const useMemberStore = defineStore("memberStore", () => {
   const isLoginError = ref(false);
   const userInfo = ref(null);
   const isValidToken = ref(false);
+  const isDuplicate = ref(false);
 
   const userLogin = async (loginUser) => {
     await userConfirm(
@@ -23,24 +24,25 @@ export const useMemberStore = defineStore("memberStore", () => {
           // console.log("data", data);
           let accessToken = data["access-token"];
           let refreshToken = data["refresh-token"];
-          console.log("accessToken", accessToken);
-          console.log("refreshToken", refreshToken);
+          // console.log("accessToken", accessToken);
+          // console.log("refreshToken", refreshToken);
           isLogin.value = true;
           isLoginError.value = false;
           isValidToken.value = true;
           sessionStorage.setItem("accessToken", accessToken);
           sessionStorage.setItem("refreshToken", refreshToken);
-          console.log("sessiontStorage에 담았다", isLogin.value);
+          // console.log("sessiontStorage에 담았다", isLogin.value);
           console.log(JSON.stringify(userInfo.value));
         } else {
-          console.log("로그인 실패했다");
           isLogin.value = false;
           isLoginError.value = true;
           isValidToken.value = false;
         }
       },
       (error) => {
-        console.error(error);
+        isLogin.value = false;
+        isLoginError.value = true;
+        isValidToken.value = false;
       }
     );
   };
@@ -71,15 +73,20 @@ export const useMemberStore = defineStore("memberStore", () => {
   };
 
   const userIdDuplicateCheck = async (userId) => { 
-    findById(
+    duplicateCheck(
       userId,
       (response) => {
-        console.log(response.data.userInfo)
-        return false;
+        if (response.status === httpStatusCode.OK) {
+          if (response.data) isDuplicate.value = false;
+          else isDuplicate.value = true;
+        } else {
+          console.log("유저 정보 없음!!!!");
+          isDuplicate.value = true;
+        }
       },
       async (error) => {
         console.log(error);
-        return true;
+        isDuplicate.value = false;
       }
     );
   }
@@ -127,9 +134,9 @@ export const useMemberStore = defineStore("memberStore", () => {
   };
 
   const userRegist = async (user) => {
-    console.log("회원 등록");
+    const registUser = JSON.stringify(user.value);
     await regist(
-      JSON.stringify(user.value),
+      registUser,
       (response) => {
         if (response.status === httpStatusCode.CREATE) {
           console.log(response.data["msg"]);
@@ -159,16 +166,33 @@ export const useMemberStore = defineStore("memberStore", () => {
     );
   };
 
+  const userInfoModify = async (user) => { 
+    const modifyUser = JSON.stringify(user.value);
+    await modify(
+      modifyUser,
+      (response) => {
+        if (response.status === httpStatusCode.CREATE) {
+          console.log(response.data["msg"]);
+        }
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+
   return {
     isLogin,
     isLoginError,
     userInfo,
     isValidToken,
+    isDuplicate,
     userLogin,
     getUserInfo,
     tokenRegenerate,
     userLogout,
     userRegist,
     userIdDuplicateCheck,
+    userInfoModify,
   };
 });
