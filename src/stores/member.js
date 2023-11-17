@@ -3,7 +3,7 @@ import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
 import { jwtDecode } from "jwt-decode";
 
-import { userConfirm, findById, tokenRegeneration, logout } from "@/api/user";
+import { userConfirm, findById, tokenRegeneration, logout, regist } from "@/api/user";
 import { httpStatusCode } from "@/util/http-status";
 
 export const useMemberStore = defineStore("memberStore", () => {
@@ -18,8 +18,6 @@ export const useMemberStore = defineStore("memberStore", () => {
     await userConfirm(
       loginUser,
       (response) => {
-        // console.log("login ok!!!!", response.status);
-        // console.log("login ok!!!!", httpStatusCode.CREATE);
         if (response.status === httpStatusCode.CREATE) {
           let { data } = response;
           // console.log("data", data);
@@ -33,6 +31,7 @@ export const useMemberStore = defineStore("memberStore", () => {
           sessionStorage.setItem("accessToken", accessToken);
           sessionStorage.setItem("refreshToken", refreshToken);
           console.log("sessiontStorage에 담았다", isLogin.value);
+          console.log(JSON.stringify(userInfo.value));
         } else {
           console.log("로그인 실패했다");
           isLogin.value = false;
@@ -70,6 +69,20 @@ export const useMemberStore = defineStore("memberStore", () => {
       }
     );
   };
+
+  const userIdDuplicateCheck = async (userId) => { 
+    findById(
+      userId,
+      (response) => {
+        console.log(response.data.userInfo)
+        return false;
+      },
+      async (error) => {
+        console.log(error);
+        return true;
+      }
+    );
+  }
 
   const tokenRegenerate = async () => {
     console.log("토큰 재발급 >> 기존 토큰 정보 : {}", sessionStorage.getItem("accessToken"));
@@ -113,6 +126,21 @@ export const useMemberStore = defineStore("memberStore", () => {
     );
   };
 
+  const userRegist = async (user) => {
+    console.log("회원 등록");
+    await regist(
+      JSON.stringify(user.value),
+      (response) => {
+        if (response.status === httpStatusCode.CREATE) {
+          console.log(response.data["msg"]);
+        }
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  };
+
   const userLogout = async (userid) => {
     await logout(
       userid,
@@ -140,5 +168,7 @@ export const useMemberStore = defineStore("memberStore", () => {
     getUserInfo,
     tokenRegenerate,
     userLogout,
+    userRegist,
+    userIdDuplicateCheck,
   };
 });

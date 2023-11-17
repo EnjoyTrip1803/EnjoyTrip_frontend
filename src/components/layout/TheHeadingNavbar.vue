@@ -1,18 +1,8 @@
 <script setup>
-import { ref } from 'vue';
 import { useMenuStore } from "@/stores/menu";
 import { storeToRefs } from "pinia";
 
 const { menuList } = storeToRefs(useMenuStore());
-const isModalOpen = ref(false);
-
-const openModal = () => {
-    isModalOpen.value = true;
-};
-
-const closeModal = () => {
-    isModalOpen.value = false;
-};
 </script>
 
 <template>
