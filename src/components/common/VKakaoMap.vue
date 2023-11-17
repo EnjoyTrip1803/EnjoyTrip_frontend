@@ -7,10 +7,12 @@ const markers = ref([]);
 
 const props = defineProps({ attractions: Array, selectAttraction: Object });
 
-onMounted(() => {
+
+onMounted( () => {
   if (window.kakao && window.kakao.maps) {
     initMap();
   } else {
+    console.log("kakao.maps is not loaded============");
     const script = document.createElement("script");
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${
       import.meta.env.VITE_KAKAO_MAP_API_SERVICE_KEY
@@ -19,39 +21,45 @@ onMounted(() => {
     script.onload = () => kakao.maps.load(() => initMap());
     document.head.appendChild(script);
   }
+  // console.log("mounted done")
 });
 
-// watch(
-//   () => props.attractions.value,
-//   () => {
-//     positions.value = [];
-//     props.stations.forEach((station) => {
-//       let obj = {};
-//       obj.latlng = new kakao.maps.LatLng(station.lat, station.lng);
-//       obj.title = station.statNm;
 
-//       positions.value.push(obj);
-//     });
-//     loadMarkers();
-//   },
-//   { deep: true }
-// );
+watch(
+  () => props.attractions.value,
+  () => {
+    // console.log(kakao)
+    // console.log(kakao.maps)
+    positions.value = [];
+    props.attractions.forEach((attraction) => {
+      let obj = {};
+      obj.latlng = new kakao.maps.LatLng(attraction.latitude, attraction.longitude);
+      obj.title = attraction.title;
+    
+      positions.value.push(obj);
 
-// watch(
-//   () => props.selectAttraction.value,
-//   () => {
-//     // 이동할 위도 경도 위치를 생성합니다
-//     var moveLatLon = new kakao.maps.LatLng(props.selectStation.lat, props.selectStation.lng);
+    });
+    loadMarkers();
+  },
+  { deep: true }
+);
 
-//     // 지도 중심을 부드럽게 이동시킵니다
-//     // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
-//     map.panTo(moveLatLon);
-//   },
-//   { deep: true }
-// );
+watch(
+  () => props.selectAttraction.value,
+  () => {
+    // 이동할 위도 경도 위치를 생성합니다
+    var moveLatLon = new kakao.maps.LatLng(props.selectAttraction.lat, props.selectAttraction.lng);
 
+    // 지도 중심을 부드럽게 이동시킵니다
+    // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
+    map.panTo(moveLatLon);
+  },
+  { deep: true }
+);
 
 const initMap = () => {
+  // console.log(kakao)
+  // console.log(kakao.maps)
   const container = document.getElementById("map");
   const options = {
     center: new kakao.maps.LatLng(33.450701, 126.570667),
@@ -59,6 +67,9 @@ const initMap = () => {
   };
   map = new kakao.maps.Map(container, options);
 
+  
+  console.log(kakao)
+  console.log(kakao.maps)
   // loadMarkers();
 };
 
