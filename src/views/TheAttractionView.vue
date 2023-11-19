@@ -5,6 +5,7 @@ import type { SelectProps, TableColumnsType } from 'ant-design-vue';
 
 import ASelect from '../components/common/ASelect.vue';
 import VKakaoMap from '../components/common/VKakaoMap.vue';
+import TheHeadingNavbar from "@/components/layout/TheHeadingNavbar.vue"
 
 const sidoList = ref<SelectProps['options']>();
 const gugunList = ref<SelectProps['options']>([{ label: "구군선택", value: "" }]);
@@ -119,6 +120,7 @@ const viewAttraction = (attraction) => {
 </script>
 
 <template>
+    <TheHeadingNavbar :light="true"/>
     <a-layout id="map-container">
         <a-layout-sider id="map-side">
             <div id="search-condition">

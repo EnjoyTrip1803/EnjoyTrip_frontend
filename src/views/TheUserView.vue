@@ -1,8 +1,9 @@
 <script setup>
-
+import TheHeadingNavbar from "@/components/layout/TheHeadingNavbar.vue"
 </script>
 
 <template>
+    <TheHeadingNavbar :light="true"/>
     <div>
         <router-view></router-view>
     </div>
