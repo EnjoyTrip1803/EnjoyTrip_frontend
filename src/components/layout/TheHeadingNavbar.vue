@@ -11,6 +11,14 @@ const props = defineProps({
     light: {
         type: Boolean,
         default: false
+    },
+    menus: {
+        type: Boolean,
+        default: true
+    },
+    flulid: {
+        type: Boolean,
+        default: false
     }
 });
 
@@ -45,7 +53,7 @@ const handleScroll = (e) => {
         'z-index-3 w-100 shadow-none navbar-transparent ': props.transparent,
         'z-index-3 w-100 navbar-light bg-white ': props.light,
     }" v-on:scroll="handleScroll">
-        <div class="container">
+        <div :class="props.flulid ? 'container-fluid' : 'container'">
             <router-link :to="{ name: 'main' }" class="navbar-brand fw-bold"
                 :class="props.transparent ? 'text-white' : 'font-weight-bolder ms-sm-3'">
                 EnjoyTrip
@@ -55,7 +63,7 @@ const handleScroll = (e) => {
             </button>
 
             <div class="d-flex" id="collapsibleNavbar">
-                <ul class="navbar-nav mb-2 me-lg-0" v-for="menu in menuList" :key="menu.name">
+                <ul class="navbar-nav mb-2 me-lg-0" v-for="menu in menuList" :key="menu.name" v-if="props.menus">
                     <li class="nav-item" v-if="menu.show">
                         <router-link :to="{ name: menu.routeName }" class="nav-link" :class="getTextColor()">{{ menu.name
                         }}</router-link>
