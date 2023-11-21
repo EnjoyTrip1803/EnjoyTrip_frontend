@@ -120,7 +120,6 @@ const viewAttraction = (attraction) => {
 </script>
 
 <template>
-    <TheHeadingNavbar :light="true"/>
     <a-layout id="map-container">
         <a-layout-sider id="map-side">
             <div id="search-condition">
@@ -155,7 +154,7 @@ const viewAttraction = (attraction) => {
 
 
         <a-layout-content>
-            <VKakaoMap :attractions="attractionList"  :selectAttraction="selectAttraction"/>
+            <VKakaoMap :attractions="attractionList" :selectAttraction="selectAttraction" />
             <!-- <VKakaoMap/> -->
         </a-layout-content>
     </a-layout>
