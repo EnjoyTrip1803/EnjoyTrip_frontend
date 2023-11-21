@@ -12,7 +12,7 @@ onMounted( () => {
   if (window.kakao && window.kakao.maps) {
     initMap();
   } else {
-    console.log("kakao.maps is not loaded============");
+    // console.log("kakao.maps is not loaded============");
     const script = document.createElement("script");
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${
       import.meta.env.VITE_KAKAO_MAP_API_SERVICE_KEY
@@ -34,8 +34,13 @@ watch(
     props.attractions.forEach((attraction) => {
       let obj = {};
       obj.latlng = new kakao.maps.LatLng(attraction.latitude, attraction.longitude);
-      obj.title = attraction.title;
-    
+      obj.content = `<div>
+        <img src="${attraction.firstImage}" style="width=100px; height:100px">
+        <div> title: ${attraction.title} </div>       
+        <button>
+        </div>`;
+      obj.src = attraction.firstImage;
+
       positions.value.push(obj);
 
     });
@@ -48,11 +53,12 @@ watch(
   () => props.selectAttraction.value,
   () => {
     // 이동할 위도 경도 위치를 생성합니다
-    var moveLatLon = new kakao.maps.LatLng(props.selectAttraction.lat, props.selectAttraction.lng);
-
+    var moveLatLon = new kakao.maps.LatLng(props.selectAttraction.latitude, props.selectAttraction.longitude);
+    map.setLevel(props.selectAttraction.mlevel);
     // 지도 중심을 부드럽게 이동시킵니다
     // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
     map.panTo(moveLatLon);
+
   },
   { deep: true }
 );
@@ -68,8 +74,8 @@ const initMap = () => {
   map = new kakao.maps.Map(container, options);
 
   
-  console.log(kakao)
-  console.log(kakao.maps)
+  // console.log(kakao)
+  // console.log(kakao.maps)
   // loadMarkers();
 };
 
@@ -94,7 +100,19 @@ const loadMarkers = () => {
       // image: markerImage, // 마커의 이미지
     });
     markers.value.push(marker);
+
+    var infowindow = new kakao.maps.InfoWindow({
+      content: position.content, // 인포윈도우에 표시할 내용
+      removable : true
+    });
+
+    kakao.maps.event.addListener(marker, 'click', function () {
+      // 마커 위에 인포윈도우를 표시합니다
+      infowindow.open(map, marker);
+    });
+
   });
+
 
   // 4. 지도를 이동시켜주기
   // 배열.reduce( (누적값, 현재값, 인덱스, 요소)=>{ return 결과값}, 초기값);
@@ -104,6 +122,7 @@ const loadMarkers = () => {
   );
 
   map.setBounds(bounds);
+  
 };
 
 const deleteMarkers = () => {
@@ -111,6 +130,7 @@ const deleteMarkers = () => {
     markers.value.forEach((marker) => marker.setMap(null));
   }
 };
+
 </script>
 
 <template>
@@ -120,6 +140,6 @@ const deleteMarkers = () => {
 <style>
 #map {
   width: 100%;
-  height: 700px;
+  height: 100%;
 }
 </style>
