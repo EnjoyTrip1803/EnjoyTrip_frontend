@@ -69,8 +69,8 @@ const router = createRouter({
           beforeEnter(to, from, next) { 
             const memberStore = useMemberStore();
             const { changeMenuState } = useMenuStore();
-            console.log(memberStore.userInfo.userId)
-            memberStore.userLogout(memberStore.userInfo.userId);
+            console.log(memberStore.userInfo.userEmail)
+            memberStore.userLogout(memberStore.userInfo.userEmail);
             changeMenuState();
             next('/');
           }

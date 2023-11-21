@@ -38,14 +38,15 @@ const onModify = async () => {
               <h1 class="fs-4 card-title fw-bold mb-4">개인 정보 수정</h1>
               <form @submit.prevent="onSubmit">
                 <div class="mb-3">
-                  <label class="mb-2 text-muted" for="userId">Id</label>
-                  <input id="userId" type="id" class="form-control" name="userId" :value="userInfo.userId" disabled>
+                  <label class="mb-2 text-muted" for="userEmail">Email</label>
+                  <input id="userEmail" type="id" class="form-control" name="userEmail" :value="userInfo.userEmail"
+                    disabled>
                 </div>
                 <div class="mb-3">
                   <div class="mb-2 w-100">
                     <label class="text-muted" for="userName">Name</label>
                     <input id="userName" type="text" class="form-control" name="userName" v-model="userInfo.userName"
-                      required>
+                      disabled>
                   </div>
                 </div>
                 <div class="mb-3">
@@ -53,17 +54,6 @@ const onModify = async () => {
                     <label class="text-muted" for="userPassword">Password</label>
                     <input id="userPassword" type="password" class="form-control" name="userPassword"
                       v-model="userInfo.userPassword" required>
-                  </div>
-                </div>
-
-                <div class="mb-3">
-                  <div class="mb-2 w-100">
-                    <label class="text-muted" for="email">Email</label>
-                    <input id="email" name="email" type="text" class="form-control w-45" :value="userInfo.emailId"
-                      disabled>
-                    <span class="input-group-text">@</span>
-                    <input id="domain" name="domain" type="text" class="form-control w-45" :value="userInfo.emailDomain"
-                      disabled>
                   </div>
                 </div>
 

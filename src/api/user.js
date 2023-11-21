@@ -7,9 +7,10 @@ async function userConfirm(param, success, fail) {
   console.log("userConfirm ok");
 }
 
-async function findById(userid, success, fail) {
+async function findById(userEmail, success, fail) {
   user.defaults.headers["Authorization"] = sessionStorage.getItem("accessToken");
-  await user.get(`/info/${userid}`).then(success).catch(fail);
+  console.log("user email check : ", userEmail);
+  await user.get(`/info/${userEmail}`).then(success).catch(fail);
 }
 
 async function tokenRegeneration(user, success, fail) {
@@ -17,13 +18,15 @@ async function tokenRegeneration(user, success, fail) {
   await user.post(`/refresh`, user).then(success).catch(fail);
 }
 
-async function logout(userid, success, fail) {
-  await user.get(`/logout/${userid}`).then(success).catch(fail);
+async function logout(userEmail, success, fail) {
+  await user.get(`/logout/${userEmail}`).then(success).catch(fail);
 }
 
-async function duplicateCheck(userid, success, fail) {
-  user.defaults.headers["Authorization"] = sessionStorage.getItem("accessToken");
-  await user.get(`/${userid}`).then(success).catch(fail);
+async function emailDuplicateCheck(userEmail, success, fail) {
+  await user.get(`/${userEmail}`).then(success).catch(fail);
+}
+async function nameDuplicateCheck(userName, success, fail) {
+  await user.get(`/username/${userName}`).then(success).catch(fail);
 }
 
 async function regist(userInfo, success, fail) {
@@ -34,4 +37,4 @@ async function modify(userInfo, success, fail) {
   await user.put(`/modify`, userInfo).then(success).catch(fail);
 }
 
-export { userConfirm, findById, tokenRegeneration, logout, duplicateCheck, regist, modify };
+export { userConfirm, findById, tokenRegeneration, logout, emailDuplicateCheck, nameDuplicateCheck, regist, modify };
