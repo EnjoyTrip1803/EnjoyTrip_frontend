@@ -14,7 +14,7 @@ const { userLogin, getUserInfo } = memberStore;
 const { changeMenuState } = useMenuStore();
 
 const loginUser = ref({
-    userId: "",
+    userEmail: "",
     userPassword: "",
 });
 
@@ -45,9 +45,9 @@ const login = async () => {
                             <h1 class="fs-4 card-title fw-bold mb-4">로그인</h1>
                             <form v-on:submit.prevent='btnClick'>
                                 <div class="mb-3">
-                                    <label class="mb-2 text-muted" for="userId">Id</label>
-                                    <input id="userId" type="id" class="form-control" name="userId"
-                                        v-model="loginUser.userId" required autofocus>
+                                    <label class="mb-2 text-muted" for="userEmail">Email</label>
+                                    <input id="userId" type="id" class="form-control" name="userEmail"
+                                        v-model="loginUser.userEmail" required autofocus>
                                 </div>
 
                                 <div class="mb-3">

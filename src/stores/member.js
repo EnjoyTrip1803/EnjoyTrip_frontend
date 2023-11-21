@@ -3,7 +3,7 @@ import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
 import { jwtDecode } from "jwt-decode";
 
-import { userConfirm, findById, tokenRegeneration, logout, duplicateCheck, regist, modify } from "@/api/user";
+import { userConfirm, findById, tokenRegeneration, logout, emailDuplicateCheck, nameDuplicateCheck,regist, modify } from "@/api/user";
 import { httpStatusCode } from "@/util/http-status";
 
 export const useMemberStore = defineStore("memberStore", () => {
@@ -13,7 +13,8 @@ export const useMemberStore = defineStore("memberStore", () => {
   const isLoginError = ref(false);
   const userInfo = ref(null);
   const isValidToken = ref(false);
-  const isDuplicate = ref(false);
+  const isEmailDuplicate = ref(false);
+  const isNameDuplicate = ref(false);
 
   const userLogin = async (loginUser) => {
     await userConfirm(
@@ -51,7 +52,7 @@ export const useMemberStore = defineStore("memberStore", () => {
     let decodeToken = jwtDecode(token);
     console.log("2. decodeToken", decodeToken);
     findById(
-      decodeToken.userId,
+      decodeToken.userEmail,
       (response) => {
         if (response.status === httpStatusCode.OK) {
           userInfo.value = response.data.userInfo;
@@ -72,24 +73,44 @@ export const useMemberStore = defineStore("memberStore", () => {
     );
   };
 
-  const userIdDuplicateCheck = async (userId) => { 
-    duplicateCheck(
-      userId,
+  const userEmailDuplicateCheck = async (userEmail) => { 
+    emailDuplicateCheck(
+      userEmail,
       (response) => {
         if (response.status === httpStatusCode.OK) {
-          if (response.data) isDuplicate.value = false;
-          else isDuplicate.value = true;
+          if (response.data) isEmailDuplicate.value = false;
+          else isEmailDuplicate.value = true;
         } else {
           console.log("유저 정보 없음!!!!");
-          isDuplicate.value = true;
+          isEmailDuplicate.value = true;
         }
       },
       async (error) => {
         console.log(error);
-        isDuplicate.value = false;
+        isEmailDuplicate.value = false;
       }
     );
   }
+
+  const userNameDuplicateCheck = async (userName) => { 
+    nameDuplicateCheck(
+      userName,
+      (response) => {
+        if (response.status === httpStatusCode.OK) {
+          if (response.data) isNameDuplicate.value = false;
+          else isNameDuplicate.value = true;
+        } else {
+          console.log("유저 정보 없음!!!!");
+          isNameDuplicate.value = true;
+        }
+      },
+      async (error) => {
+        console.log(error);
+        isNameDuplicate.value = false;
+      }
+    );
+  }
+
 
   const tokenRegenerate = async () => {
     console.log("토큰 재발급 >> 기존 토큰 정보 : {}", sessionStorage.getItem("accessToken"));
@@ -109,7 +130,7 @@ export const useMemberStore = defineStore("memberStore", () => {
           console.log("갱신 실패");
           // 다시 로그인 전 DB에 저장된 RefreshToken 제거.
           await logout(
-            userInfo.value.userid,
+            userInfo.value.userEmail,
             (response) => {
               if (response.status === httpStatusCode.OK) {
                 console.log("리프레시 토큰 제거 성공");
@@ -148,9 +169,9 @@ export const useMemberStore = defineStore("memberStore", () => {
     );
   };
 
-  const userLogout = async (userid) => {
+  const userLogout = async (userEmail) => {
     await logout(
-      userid,
+      userEmail,
       (response) => {
         if (response.status === httpStatusCode.OK) {
           isLogin.value = false;
@@ -186,13 +207,15 @@ export const useMemberStore = defineStore("memberStore", () => {
     isLoginError,
     userInfo,
     isValidToken,
-    isDuplicate,
+    isEmailDuplicate,
+    isNameDuplicate,
     userLogin,
     getUserInfo,
     tokenRegenerate,
     userLogout,
     userRegist,
-    userIdDuplicateCheck,
+    userEmailDuplicateCheck,
+    userNameDuplicateCheck,
     userInfoModify,
   };
 });
