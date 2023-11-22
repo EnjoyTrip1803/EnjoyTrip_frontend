@@ -5,21 +5,23 @@
 
 import { ref } from 'vue';
 
-const card = ref({
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8sgzRZllAB6iub5Cf8B9Z0OTaLLneSb3vtw&usqp=CAU",
-    title: "여행지명",
-    info: "정보"
-
+const props = defineProps({
+    card: Object
 })
+
+const onPlan = () => {
+    // 클릭시 계획 페이지로 이동하기(param으로 sidoCode 넘기기)
+}
+console.log(props.card)
 </script>
 
 <template>
     <div class="card">
-        <img class="card-img-top" :src="`${card.image}`" alt="Card image">
+        <img class="card-img-top" :src="props.card.image" alt="Card image">
         <div class="card-body">
-            <h4 class="card-title">{{ card.title }}</h4>
-            <p class="card-text">{{ card.info }}</p>
-            <a href="#" class="btn btn-primary">계획하기</a>
+            <h4 class="card-title">{{ props.card.title }}</h4>
+            <p class="card-text">{{ props.card.info }}</p>
+            <button class="btn btn-primary" @click="onPlan">계획하기</button>
         </div>
     </div>
 </template>

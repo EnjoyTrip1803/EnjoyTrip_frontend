@@ -1,6 +1,6 @@
 <script setup>
 import TheHeadingNavbar from "@/components/layout/TheHeadingNavbar.vue"
-import ImageCard from '@/components/common/ImageCard.vue';
+import MainSidoCard from '@/components/main/MainSidoCard.vue';
 </script>
 
 <template>
@@ -10,9 +10,7 @@ import ImageCard from '@/components/common/ImageCard.vue';
             <h1>Put It All Down For A While</h1>
         </div>
     </div>
-    <div class="m-10">
-        <ImageCard></ImageCard>
-    </div>
+    <MainSidoCard></MainSidoCard>
 </template>
 
 <style scoped>
