@@ -1,7 +1,7 @@
 <script setup>
 const props = defineProps({
-  width: { type: String, default: "300px" },
-  height: { type: String, default: "400px" },
+  width: { type: String, default: "100px" },
+  height: { type: String, default: "70px" },
   color: { type: String, default: "black" },
 })
 
@@ -15,11 +15,11 @@ const colorState = {
   <svg xmlns:mydata="http://www.w3.org/2000/svg" mydata:contrastcolor="11111f" mydata:template="Contrast"
     mydata:presentation="2.5" mydata:layouttype="undefined" mydata:specialfontid="undefined" mydata:id1="063"
     mydata:id2="1054" mydata:companyname="Enjoy Trip" mydata:companytagline="" version="1.1"
-    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 550 470"
-    :width="props.width" :height="props.height">
+    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="100 100 350 270"
+    :width="props.width" :height="props.height" style="border: 1px solid red;" >
     <g :fill="colorState[props.color]" fill-rule="none" stroke="none" stroke-width="1" stroke-linecap="butt"
       stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none"
-      font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+      font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal" >
       <g
         data-paper-data="{&quot;isGlobalGroup&quot;:true,&quot;bounds&quot;:{&quot;x&quot;:83.67542756430626,&quot;y&quot;:175.7772646917177,&quot;width&quot;:382.64914487138753,&quot;height&quot;:118.44596018833684}}">
         <g data-paper-data="{&quot;stacked&quot;:true,&quot;isPrimaryText&quot;:true}" fill-rule="nonzero"
