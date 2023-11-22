@@ -1,10 +1,4 @@
 <script setup>
-// defineProps({
-//     card: Object
-// })
-
-import { ref } from 'vue';
-
 const props = defineProps({
     card: Object
 })
@@ -12,7 +6,6 @@ const props = defineProps({
 const onPlan = () => {
     // 클릭시 계획 페이지로 이동하기(param으로 sidoCode 넘기기)
 }
-console.log(props.card)
 </script>
 
 <template>
