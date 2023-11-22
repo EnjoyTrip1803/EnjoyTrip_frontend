@@ -1,28 +1,24 @@
 <script setup>
-
+import logo from '@/assets/img/logos/logo.vue';
 </script>
 
 <template>
-    <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark">
-      <a class="navbar-brand" href="#">Enjoy</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
-        aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
-        <ul class="navbar-nav mr-auto">
-          <!-- <li class="nav-item active">
-              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-            </li> -->
-          <li class="nav-item">
-            <a class="nav-link" href="#">오시는길</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link disabled" href="#">이용약관</a>
-          </li>
-        </ul>
-      </div>
-    </nav>
+  <footer class="container d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+    <div class="col-md-4 d-flex align-items-center">
+      <router-link :to="{ name: 'main' }" class="navbar-brand fw-bold">
+        <logo :width="'100px'" :height="'70px'" />
+      </router-link>
+    </div>
+
+    <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+      <li class="ms-3">
+        <router-link :to="{ name: 'main' }" class="text-body-secondary">Home</router-link>
+      </li>
+      <li class="ms-3"><a class="text-body-secondary" href="#">오시는길</a></li>
+      <li class="ms-3"><a class="text-body-secondary" href="#">이용약관</a></li>
+    </ul>
+    <span class="mb-3 mb-md-0 text-body-secondary">©2023 SSAFY</span>
+  </footer>
 </template>
 
 <style scoped></style>
