@@ -30,8 +30,8 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [{
     path: '/test',
-    name: 'test',
-    component: () => import("@/views/test.vue")
+  name: 'test',
+  component: () => import("@/views/test.vue")
   },
     {
       path: '/',
@@ -80,11 +80,6 @@ const router = createRouter({
           path: "/join",
           name: "user-join",
           component: () => import("@/components/user/UserRegist.vue"),
-        },
-        {
-          path: "/mypage",
-          name: "user-mypage",
-          component: () => import("@/components/user/UserMyPage.vue"),
         },
         {
           path: "/logout",
@@ -136,6 +131,20 @@ const router = createRouter({
           name: "article-modify",
           component: () => import("@/components/board/BoardModify.vue"),
         },
+      ],
+    },
+    
+    {
+      path: "/mypage",
+      name: "mypage",
+      component: () => import("@/views/TheMyView.vue"),
+      redirect: { name: "mypage-modify" },
+      children: [
+        {
+          path: "/modify",
+          name: "mypage-modify",
+          component: () => import("@/components/user/UserModify.vue"),
+        }
       ],
     },
   ]
