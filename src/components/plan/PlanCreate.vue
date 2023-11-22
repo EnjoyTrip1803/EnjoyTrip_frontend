@@ -1,10 +1,12 @@
 <script setup>
+import { ref } from 'vue';
 import { reactive } from 'vue';
 import { useRouter } from "vue-router";
 
 import { createTripPlan } from "@/api/plan";
 
 const router = useRouter();
+const { userId } = history.state;
 
 const formState = reactive({
   title: ''
@@ -21,12 +23,21 @@ const rangeConfig = {
 };
 
 const onFinish = values => {
-  console.log('Success:', values);
-  const planId = ref();
+  console.log('Success:', {
+      title: values["title"],
+      userId: userId,
+      startDate: Date.parse(values["date"][0]) / 1000,
+      endDate: Date.parse(values["date"][1]) / 1000,
+    });
   createTripPlan(
-    values,
-      (result) => {
-          console.log(data)
+    {
+      title: values["title"],
+      userId: userId,
+      startDate: Date.parse(values["date"][0]) / 1000,
+      endDate: Date.parse(values["date"][1]) / 1000,
+    },
+      ({data}) => {
+        router.push({ name: "makeList", state: {userId: data.userId, planId: data.planId, title: data.title} });
       },
       (err) => {
           console.log(err);
@@ -60,7 +71,7 @@ const onFinishFailed = errorInfo => {
 
 
     <a-form-item name="date" label="Date" v-bind="rangeConfig">
-      <a-range-picker v-model:value="formState['date']" value-format="YY-MM-DD" />
+      <a-range-picker v-model:value="formState['date']" value-format="YYYY-MM-DD HH:MM:ss" />
     </a-form-item>
 
     <a-form-item :wrapper-col="{ offset: 8, span: 16 }">

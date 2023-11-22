@@ -1,32 +1,55 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from "vue-router";
-
+import { storeToRefs } from "pinia";
+import { useMemberStore } from "@/stores/member.js"
+import { listPlan } from "@/api/plan.js"
 import TheHeadingNavbar from "@/components/layout/TheHeadingNavbar.vue"
 
-
-onMounted(() => {
-    
-})
-
 const router = useRouter();
-
+const { userInfo } = storeToRefs(useMemberStore());
+const userId = ref(userInfo.value.userId);
 const planList = ref([{
     trip_start_date: "20-2-2",
     trip_end_date: "20-2-2",
     title: "서울여행",
 }])
 
-const movePlan = (planId) => {
-    router.push({ name: "map", params: {planId: planId} });
+onMounted(() => {
+    console.log(userInfo.value);
+    getPlanList(userId.value);
+})
+
+const movePlan = (planId, title) => {
+// console.log(userId.value, planId)
+// console.log(typeof(userId.value), typeof(planId))
+    router.push({ name: "makeList", state: {userId: userId.value, planId: planId, title: title} });
 }
 const createPlan = () => {
-    console.log("createPlan clicked")
-    router.push({ name: "createPlan" });
+    // console.log("createPlan clicked")
+    // console.log(userId.value)
+    router.push({ name: "createPlan", state: {userId: userId.value} });
 }
 
-const userId = "test";
 // console.log(planList.value.length)
+
+const getPlanList = (userId) => {
+    listPlan(
+        userId,
+        ({ data }) => {
+            // console.log(data);
+            var list = [];
+            data.forEach((plan) => {
+                // console.log(plan);
+                list.push(plan)
+            });
+            planList.value = list;
+        },
+        (err) => {
+          console.log(err);
+        }
+    );
+}
 </script>
 
 <template>
@@ -39,7 +62,7 @@ const userId = "test";
                 <div v-else>
                     여행 계획 선택하기
                     <div v-for="plan in planList" :key="plan.planId">
-                        <div @click="movePlan(plan.planId)">
+                        <div @click="movePlan(plan.planId, plan.title)">
                             {{ plan.title }}
                         </div>
                     </div>
