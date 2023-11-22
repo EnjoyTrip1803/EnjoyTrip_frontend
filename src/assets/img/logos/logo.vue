@@ -16,7 +16,7 @@ const colorState = {
     mydata:presentation="2.5" mydata:layouttype="undefined" mydata:specialfontid="undefined" mydata:id1="063"
     mydata:id2="1054" mydata:companyname="Enjoy Trip" mydata:companytagline="" version="1.1"
     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="100 100 350 270"
-    :width="props.width" :height="props.height" style="border: 1px solid red;" >
+    :width="props.width" :height="props.height" style="margin: auto 10px;" >
     <g :fill="colorState[props.color]" fill-rule="none" stroke="none" stroke-width="1" stroke-linecap="butt"
       stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none"
       font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal" >
