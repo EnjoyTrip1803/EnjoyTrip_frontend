@@ -1,6 +1,8 @@
 <script setup>
 import { ref, watch, onMounted } from "vue";
 
+const emit = defineEmits(['mountedKakaoMap'])
+
 var map;
 const positions = ref([]);
 const markers = ref([]);
@@ -20,10 +22,18 @@ onMounted( () => {
     /* global kakao */
     script.onload = () => kakao.maps.load(() => initMap());
     document.head.appendChild(script);
-  }
+    
+    (async () => {
+      await sleep(0.1); 
+      emit('mountedKakaoMap');
+      })();
+     }
   // console.log("mounted done")
 });
 
+function sleep(sec) {
+  return new Promise(resolve => setTimeout(resolve, sec * 1000));
+}
 
 watch(
   () => props.attractions.value,
