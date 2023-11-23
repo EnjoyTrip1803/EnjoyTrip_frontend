@@ -1,7 +1,7 @@
 <script setup>
 import { useMenuStore } from "@/stores/menu";
 import { storeToRefs } from "pinia";
-import logo from '@/assets/img/logos/logo.vue';
+import logo from '@/assets/logo/logo.vue';
 
 const { menuList } = storeToRefs(useMenuStore());
 const props = defineProps({
