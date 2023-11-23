@@ -1,10 +1,10 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { listArticle } from "@/api/board.js";
 
 import VSelect from "@/components/common/VSelect.vue";
-import BoardListItem from "@/components/board/item/BoardListItem.vue";
-import VPageNavigation from "@/components/common/VPageNavigation.vue";
+import BoardCardItem from "@/components/board/item/BoardCardItem.vue"
 
 const router = useRouter();
 
@@ -37,14 +37,18 @@ const changeKey = (val) => {
 
 const getArticleList = () => {
   console.log("서버에서 글목록 얻어오자!!!", param.value);
-   // API 호출
-};
-
-const onPageChange = (val) => {
-  console.log(val + "번 페이지로 이동 준비 끝!!!");
-  currentPage.value = val;
-  param.value.pgno = val;
-  getArticleList();
+  listArticle(
+    param.value,
+    ({ data }) => {
+      console.log(data);
+      articles.value = data;
+      currentPage.value = data.currentPage;
+      totalPage.value = data.totalPageCount;
+    },
+    (error) => {
+      console.error(error);
+    }
+  );
 };
 
 const moveWrite = () => {
@@ -57,55 +61,32 @@ const moveWrite = () => {
     <div class="row justify-content-center">
       <div class="col-lg-10">
         <h2 class="my-3 py-3 shadow-sm bg-light text-center">
-          <mark class="sky">글목록</mark>
+          핫플레이스
         </h2>
       </div>
       <div class="col-lg-10">
         <div class="row align-self-center mb-2">
           <div class="col-md-2 text-start">
-            <button type="button" class="btn btn-outline-primary btn-sm" @click="moveWrite">
+            <button type="button" class="btn btn-outline-dark btn-sm" @click="moveWrite">
               글쓰기
             </button>
           </div>
           <div class="col-md-5 offset-5">
             <form class="d-flex">
               <VSelect :selectOption="selectOption" @onKeySelect="changeKey" />
-              <div class="input-group input-group-sm">
-                <input
-                  type="text"
-                  class="form-control"
-                  v-model="param.word"
-                  placeholder="검색어..."
-                />
+              <div class="input-group input-group-sm ms-1">
+                <input type="text" class="form-control" v-model="param.word" placeholder="검색어..." />
                 <button class="btn btn-dark" type="button" @click="getArticleList">검색</button>
               </div>
             </form>
           </div>
         </div>
-        <table class="table table-hover">
-          <thead>
-            <tr class="text-center">
-              <th scope="col">글번호</th>
-              <th scope="col">제목</th>
-              <th scope="col">작성자</th>
-              <th scope="col">조회수</th>
-              <th scope="col">작성일</th>
-            </tr>
-          </thead>
-          <tbody>
-            <BoardListItem
-              v-for="article in articles"
-              :key="article.articleNo"
-              :article="article"
-            ></BoardListItem>
-          </tbody>
-        </table>
+        <div class="row mb-2">
+          <div class="col-sm-5 col-xl-3 " v-for="article in articles">
+            <BoardCardItem :article="article"></BoardCardItem>
+          </div>
+        </div>
       </div>
-      <VPageNavigation
-        :current-page="currentPage"
-        :total-page="totalPage"
-        @pageChange="onPageChange"
-      ></VPageNavigation>
     </div>
   </div>
 </template>

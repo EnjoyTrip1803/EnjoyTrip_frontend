@@ -1,6 +1,7 @@
 <script setup>
 import { useMenuStore } from "@/stores/menu";
 import { storeToRefs } from "pinia";
+import logo from '@/assets/img/logos/logo.vue';
 
 const { menuList } = storeToRefs(useMenuStore());
 const props = defineProps({
@@ -56,7 +57,7 @@ const handleScroll = (e) => {
         <div :class="props.flulid ? 'container-fluid' : 'container'">
             <router-link :to="{ name: 'main' }" class="navbar-brand fw-bold"
                 :class="props.transparent ? 'text-white' : 'font-weight-bolder ms-sm-3'">
-                EnjoyTrip
+                <logo :width="'200px'" :height="'100px'" />
             </router-link>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
                 <span class="navbar-toggler-icon"></span>

@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { registArticle, getModifyArticle, modifyArticle } from "@/api/board";
 
 const router = useRouter();
 const route = useRoute();
@@ -13,16 +14,26 @@ const article = ref({
   articleNo: 0,
   subject: "",
   content: "",
-  userId: "",
+  userId: 1,
   userName: "",
   hit: 0,
-  registerTime: "",
+  registerTime: ""
 });
+const file = ref('');
 
 if (props.type === "modify") {
   let { articleno } = route.params;
   console.log(articleno + "번글 얻어와서 수정할거야");
-  // API 호출
+  getModifyArticle(
+    articleno,
+    ({ data }) => {
+      article.value = data;
+      isUseId.value = true;
+    },
+    (error) => {
+      console.error(error);
+    }
+  );
   isUseId.value = true;
 }
 
@@ -62,13 +73,51 @@ function onSubmit() {
 }
 
 function writeArticle() {
-  console.log("글등록하자!!", article.value);
-   // API 호출
+  console.log("글등록하자!!", file.value);
+  const formData = new FormData();
+  formData.append('subject', article.value.subject);
+  formData.append('content', article.value.content);
+  formData.append('userId', article.value.userId);
+  formData.append('upfile', file.value);
+  // // FormData의 key 확인
+  // for (let key of formData.keys()) {
+  //   console.log(key);
+  // }
+
+  // FormData의 value 확인
+  for (let value of formData.values()) {
+    console.log(value);
+  }
+  registArticle(
+    formData,
+    (response) => {
+      let msg = "글등록 처리시 문제 발생했습니다.";
+      if (response.status == 201) msg = "글등록이 완료되었습니다.";
+      alert(msg);
+      moveList();
+    },
+    (error) => console.error(error)
+  );
 }
 
 function updateArticle() {
   console.log(article.value.articleNo + "번글 수정하자!!", article.value);
-   // API 호출
+  modifyArticle(
+    article.value,
+    (response) => {
+      let msg = "글수정 처리시 문제 발생했습니다.";
+      if (response.status == 200) msg = "글정보 수정이 완료되었습니다.";
+      alert(msg);
+      moveList();
+      // router.push({ name: "article-view" });
+      // router.push(`/board/view/${article.value.articleNo}`);
+    },
+    (error) => console.log(error)
+  );
+}
+
+const fileChange = (e) => {
+  file.value = e.target.files[0];
 }
 
 function moveList() {
@@ -79,29 +128,22 @@ function moveList() {
 <template>
   <form @submit.prevent="onSubmit">
     <div class="mb-3">
-      <label for="userid" class="form-label">작성자 ID : </label>
-      <input
-        type="text"
-        class="form-control"
-        v-model="article.userId"
-        :disabled="isUseId"
-        placeholder="작성자ID..."
-      />
+      <input type="text" class="form-control" id="subject" v-model="article.subject" placeholder="제목을 입력하세요..." />
     </div>
     <div class="mb-3">
-      <label for="subject" class="form-label">제목 : </label>
-      <input type="text" class="form-control" v-model="article.subject" placeholder="제목..." />
+      <textarea class="form-control" id="content" v-model="article.content" rows="10"
+        placeholder="내용을 입력하세요..."></textarea>
     </div>
     <div class="mb-3">
-      <label for="content" class="form-label">내용 : </label>
-      <textarea class="form-control" v-model="article.content" rows="10"></textarea>
+      <label for="formFile" class="form-label h4">이미지</label>
+      <input class="form-control" type="file" accept="image/*" @change="fileChange" />
     </div>
     <div class="col-auto text-center">
-      <button type="submit" class="btn btn-outline-primary mb-3" v-if="type === 'regist'">
+      <button type="submit" class="btn btn-outline-dark mb-3" v-if="type === 'regist'">
         글작성
       </button>
-      <button type="submit" class="btn btn-outline-success mb-3" v-else>글수정</button>
-      <button type="button" class="btn btn-outline-danger mb-3 ms-1" @click="moveList">
+      <button type="submit" class="btn btn-outline-dark mb-3" v-else>글수정</button>
+      <button type="button" class="btn btn-outline-dark mb-3 ms-1" @click="moveList">
         목록으로이동...
       </button>
     </div>

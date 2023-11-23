@@ -6,7 +6,7 @@ export const useMenuStore = defineStore("menuStore", () => {
     { name: "여행", show: true, routeName: "attraction" },
     { name: "게시판", show: true, routeName: "board" },
     { name: "로그인", show: true, routeName: "user-login" },
-    { name: "내정보", show: false, routeName: "user-mypage" },
+    { name: "내정보", show: false, routeName: "mypage" },
     { name: "로그아웃", show: false, routeName: "user-logout" },
   ]);
 
