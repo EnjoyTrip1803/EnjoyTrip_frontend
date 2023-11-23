@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
 import { listArea, listAttractions, listContentType } from "@/api/attraction";
 import type { SelectProps, TableColumnsType } from 'ant-design-vue';
 import { createTripPlanAttraction, listTripPlanAttraction, ramoveTripPlanAttraction } from '@/api/plan.js'
 
 import ASelect from '@/components/common/ASelect.vue';
 import VKakaoMap from '@/components/common/VKakaoMap.vue';
-import logo from '@/assets/img/logos/logo.vue';
 
-const router = useRouter();
-const { userId, planId, title } = history.state;
+// const { userId, planId, title } = history.state;
+const userId = 5;
+const planId = 10;
+const title = "it's a title";
 
 const sidoList = ref<SelectProps['options']>();
 const gugunList = ref<SelectProps['options']>([{ label: "구군선택", value: "" }]);
@@ -81,8 +81,6 @@ const getAttractions = () => {
     listAttractions(
         searchCondition.value,
         ({ data }) => {
-            // console.log(data.length)
-            // console.log(data[0])
             attractionList.value = data;
             // console.log(attractionList.value);
         },
@@ -147,10 +145,6 @@ const viewAttraction = (attraction) => {
     selectAttraction.value = attraction;
 };
 
-const moveMain = () => {
-    router.push({ name: 'main' })
-}
-
 const addPlanAttraction = (contentId) => {
     planCondition.value.contentId = contentId;
     createTripPlanAttraction(
@@ -177,9 +171,6 @@ const removePlanAttraction = (contentId) => {
 <template>
     <div class="row" id="map-container">
         <div class="col-3" id="map-side">
-            <div @click="moveMain">
-                <logo />
-            </div>
             <div id="search-condition">
                 <div>
                     area
@@ -214,33 +205,14 @@ const removePlanAttraction = (contentId) => {
                 </a-table>
             </div>
         </div>
-        <div class="col-2">
-            <div>
-                <h3> Plan </h3>
-                <h5> {{ title }}</h5>
-            </div>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>contentId</th>
-                    </tr>
-                </thead>
-                <tbody v-if="planAttractionList[0] != null">
-                    <tr v-for="attraction in planAttractionList" :key="attraction.contentId">
-                        <td>{{ attraction.title }}</td>
-                        <a href="#" @click="removePlanAttraction(attraction.contentId)"> del </a>
-                    </tr>
-                </tbody>
-            </table>
-
-        </div>
-        <div class="col-7">
+        <div class="col-6">
             <VKakaoMap :attractions="attractionList" :selectAttraction="selectAttraction" />
         </div>
     </div>
 </template>
 
-<style scoped>  #map-container {
+<style scoped>  
+#map-container {
       position: absolute;
       width: 100%;
       height: 100%;
