@@ -3,6 +3,11 @@ import { useMenuStore } from "@/stores/menu";
 import { storeToRefs } from "pinia";
 import logo from '@/assets/logo/logo.vue';
 
+
+const scrolling = (e) => {
+
+}
+
 const { menuList } = storeToRefs(useMenuStore());
 const props = defineProps({
     transparent: {
@@ -38,26 +43,21 @@ const getTextColor = () => {
     } else {
         color = "text-dark";
     }
-    return color;
+    return "text-dark";
+
 };
 
-const handleScroll = (e) => {
-    if (e.target.scrollTop !== 0) {
-        props.transparent = false;
-        props.light = true;
-    }
-}
 </script>
 
 <template>
-    <nav class="navbar navbar-expand-lg sticky-top" :class="{
+    <nav class="navbar navbar-expand-sm fixed-top navbar-light" :class="{
         'z-index-3 w-100 shadow-none navbar-transparent ': props.transparent,
         'z-index-3 w-100 navbar-light bg-white ': props.light,
-    }" v-on:scroll="handleScroll">
+    }" v-on:scroll="scrolling(e)">
         <div :class="props.flulid ? 'container-fluid' : 'container'">
             <router-link :to="{ name: 'main' }" class="navbar-brand fw-bold"
                 :class="props.transparent ? 'text-white' : 'font-weight-bolder ms-sm-3'">
-                <logo :width="'200px'" :height="'100px'" />
+                <logo :width="'200px'" :height="'80px'" />
             </router-link>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
                 <span class="navbar-toggler-icon"></span>
@@ -66,8 +66,9 @@ const handleScroll = (e) => {
             <div class="d-flex" id="collapsibleNavbar">
                 <ul class="navbar-nav mb-2 me-lg-0" v-for="menu in menuList" :key="menu.name" v-if="props.menus">
                     <li class="nav-item" v-if="menu.show">
-                        <router-link :to="{ name: menu.routeName }" class="nav-link" :class="getTextColor()">{{ menu.name
-                        }}</router-link>
+                        <router-link :to="{ name: menu.routeName }" class="nav-link" :class="getTextColor()">
+                            <h4>{{ menu.name }}</h4>
+                        </router-link>
                     </li>
                 </ul>
             </div>
@@ -81,6 +82,6 @@ const handleScroll = (e) => {
 }
 
 .nav-link {
-    font-size: 22px;
+    font-size: 24px;
 }
 </style>
