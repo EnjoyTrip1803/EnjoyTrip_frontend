@@ -4,9 +4,8 @@ import { useRouter } from "vue-router";
 
 import { createTripPlan } from "@/api/plan";
 
-defineEmits(['changeMode'])
+const emit = defineEmits(["changeMode"]);
 
-const router = useRouter();
 // const { userId } = history.state;
 const userId = 5;
 
@@ -57,8 +56,8 @@ const onFinish = values => {
       endDate: Date.parse(values["date"][1]) / 1000,
     },
     ({ data }) => {
-      $emit('change-mode', )
-      // router.push({ name: "makeList", state: { userId: data.userId, planId: data.planId, title: data.title } });
+      emit('changeMode', 'attraction', data.planId, data.title);
+      // router.push({ name: "attraction", state: { userId: data.userId, planId: data.planId, title: data.title } });
     },
     (err) => {
       console.log(err);

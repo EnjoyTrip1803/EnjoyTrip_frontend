@@ -6,10 +6,12 @@ import { createTripPlanAttraction, ramoveTripPlanAttraction } from '@/api/plan.j
 import ASelect from '@/components/common/ASelect.vue';
 import VKakaoMap from '@/components/common/VKakaoMap.vue';
 
+const emit = defineEmits(['callGetAttractionList']);
 
 const props = defineProps({
-    mode: { type: String, default: 'map' },
-    planId: { type: Number, default: 10 },
+    mode:String,
+    planId: Number,
+    sidoCode: { type: Number, default: null},
 })
 
 const sidoList = ref();
@@ -32,10 +34,18 @@ const planCondition = ref({
 
 
 onMounted(() => {
-  getSidoList();
-  getContentTypeList();
+    getSidoList();
+    getContentTypeList();
+    
 });
 
+const mountedKakaoMap = () => {
+    if (props.sidoCode !== null) {
+        searchCondition.value.sidoCode = props.sidoCode;
+        console.log(searchCondition.value)
+        getAttractions();
+    }
+}
 
 const onChangeSido = (val) => {
   searchCondition.value.sidoCode = val;
@@ -120,10 +130,15 @@ const viewAttraction = (attraction) => {
 };
 
 const addPlanAttraction = (contentId) => {
-  planCondition.value.contentId = contentId;
+    planCondition.value.planId = props.planId;
+    planCondition.value.contentId = contentId;
+  console.log(planCondition.value)
   createTripPlanAttraction(
     planCondition.value,
-      () => { console.log("성공"); },
+      () => {
+          emit('callGetAttractionList');
+          console.log("성공");
+      },
       (err) => { console.log(err); }
   )
 
@@ -152,7 +167,7 @@ const removePlanAttraction = (contentId) => {
                 <!-- <logo_icon width="20px" height="20px" /> -->
                 <strong>SEARCH</strong>
               </div>
-              <ASelect :selectOption="sidoList" @onKeySelect="onChangeSido" />
+              <ASelect :key="props.sidoCode" :selectOption="sidoList" @onKeySelect="onChangeSido" />
               <ASelect :selectOption="gugunList" @onKeySelect="onChangeGugun" />
               <ASelect :selectOption="contentTypeList" @onKeySelect="onContentType" />
               <div>
@@ -179,7 +194,7 @@ const removePlanAttraction = (contentId) => {
               <a href="#" class="list-group-item list-group-item-action py-3 lh-tight" style="border: none;">
                 <div class="d-flex align-items-center justify-content-between">
                     <strong class="mb-1">{{ attraction.title }}</strong>
-                    <div v-if="!(props.planId==='')">
+                    <div v-if="props.mode==='attraction'">
                       <button type="button" class="btn btn-outline-primary btn-sm" @click="addPlanAttraction(attraction.contentId)">Add</button>
                     </div>
                 </div>
@@ -198,7 +213,7 @@ const removePlanAttraction = (contentId) => {
     </div>
 
     <div id="map">
-      <VKakaoMap :attractions="attractionList" :selectAttraction="selectAttraction" />
+      <VKakaoMap @mountedKakaoMap="mountedKakaoMap" :attractions="attractionList" :selectAttraction="selectAttraction" />
     </div>
 
   </div>

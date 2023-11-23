@@ -2,11 +2,12 @@
 import { ref, onMounted } from 'vue';
 import { createTripPlanAttraction, listTripPlanAttraction, ramoveTripPlanAttraction } from '@/api/plan.js'
 
-// const { userId, planId, title } = history.state;
+const emit = defineEmits(["changeMode"]);
 
-const userId = 5;
-const planId = 10;
-const title = "it's a title";
+const props = defineProps({
+    planId: { type: Number, default: 10 },
+    title: {type:String, default:'default title'}
+})
 
 const planAttractionList = ref([]);
 
@@ -15,14 +16,14 @@ onMounted(() => {
 });
 
 const planCondition = ref({
-  planId: planId,
+  planId: props.planId,
   contentId: 0,
 });
 
 
 const getPlanList = () => {
   listTripPlanAttraction(
-    planId,
+    props.planId,
     ({ data }) => {
       // console.log(data)
       planAttractionList.value = data;
@@ -34,6 +35,8 @@ const getPlanList = () => {
   console.log("planAttractionList")
   console.log(planAttractionList.value)
 }
+
+defineExpose({ getPlanList });
 
 const addPlanAttraction = (contentId) => {
   planCondition.value.contentId = contentId;
@@ -62,9 +65,16 @@ const removePlanAttraction = (contentId) => {
   <div class="plan-attraction-list-container justify-content-center overflow-auto">
     <a href="#"
       class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom justify-content-between">
-      <div class="d-flex flex-column ">
-        <span class="fs-6 fw-semibold">your</span>
-        <span class="fs-2 fw-semibold" style="">{{ title }}</span>
+      <div class="d-flex flex-column " style="width: 100%;">
+        <div class="d-flex align-items-center justify-content-between">
+            <div>
+                <span class="fs-6 fw-semibold">your</span>
+            </div>
+            <div>
+                <img src="@/assets/icon/list.png" alt="list" height="25" width="25" @click="emit('changeMode', 'map')">
+            </div>
+        </div>
+        <span class="fs-2 fw-semibold" style="">{{ props.title }}</span>
       </div>
       <!-- <img src="@\assets\icon\plus.png" style="width: 30px; margin: 0 10px;" @click="createPlan" /> -->
     </a>
@@ -72,7 +82,7 @@ const removePlanAttraction = (contentId) => {
       <div class="list-group list-group-flush border-bottom scrollarea" v-for="attraction in planAttractionList"
         :key="attraction.contentId">
         <a href="#" class="list-group-item list-group-item-action py-0 lh-tight" @click="viewAttraction(attraction)">
-          <div class="d-flex align-items-center" id="attraction-card">
+          <div class="d-flex align-items-center" id="attraction-card" >
             <div v-if="attraction.firstImage === ''"> <!-- == 2개는 자바스크립트에서는 안돼요. === 3개로 써주세요. 아시겠어요???? -->
               <div class="d-flex justify-content-center align-items-center" style="width: 130px; height: 100px;">
                 <img src="@/assets/icon/image.png" :alt="`${attraction.title}`" height="70" width="70">
@@ -86,7 +96,7 @@ const removePlanAttraction = (contentId) => {
             <a href="#" class="list-group-item list-group-item-action py-3 lh-tight" style="border: none;">
               <div class="d-flex align-items-center justify-content-between">
                 <strong class="mb-1">{{ attraction.title }}</strong>
-                <button type="button" class="btn btn-outline-primary btn-sm"
+                <button type="button" class="btn btn-outline-danger btn-sm"
                   @click="removePlanAttraction(attraction.contentId)">Del</button>
               </div>
               <div class="col-10 mb-1 small">
@@ -100,6 +110,11 @@ const removePlanAttraction = (contentId) => {
           </div>
         </a>
       </div>
+    </div>
+    <div v-else>
+        <div class="d-flex justify-content-center" style="width: 300px; padding-top: 50px;">
+            <h5>no attraction</h5>
+        </div>
     </div>
   </div>
 </template>

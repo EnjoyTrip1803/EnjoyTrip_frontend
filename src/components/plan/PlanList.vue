@@ -3,8 +3,9 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/stores/member.js"
-import { listPlan } from "@/api/plan.js"
+import { listPlan, removeTripPlan } from "@/api/plan.js"
 
+const emit = defineEmits(["changeMode"]);
 
 const router = useRouter();
 const { userInfo } = storeToRefs(useMemberStore());
@@ -12,20 +13,23 @@ const { userInfo } = storeToRefs(useMemberStore());
 const userId = ref(5);
 const planList = ref([]);
 
+
 onMounted(() => {
   getPlanList(userId.value);
 })
 
 const movePlan = (planId, title) => {
-  router.push({ name: "makeList", state: { userId: userId.value, planId: planId, title: title } });
+  emit('changeMode', 'attraction',planId, title);
+  // router.push({ name: "attraction", state: { mode:'attraction', planId: planId, title: title } });
 }
 const createPlan = () => {
-  router.push({ name: "createPlan", state: { userId: userId.value } });
+  emit('changeMode', 'create');
+  // router.push({ name: "attraction", state: { mode:'create' }});
 }
 
-const getPlanList = (userId) => {
+const getPlanList = () => {
   listPlan(
-    userId,
+    userId.value,
     ({ data }) => {
       var list = [];
       data.forEach((plan) => {
@@ -49,6 +53,15 @@ const getDateFomr = (timestamp) => {
   var formattedDate = year + " " + month + " " + day;
   return formattedDate;
 }
+
+const removeTripPlanCall = (planId) => {
+  console.log(planId)
+    removeTripPlan(
+    planId,
+    () => { getPlanList(); },
+    (err) => { console.log(err) }
+  )
+}
 </script>
 
 <template>
@@ -68,9 +81,10 @@ const getDateFomr = (timestamp) => {
               <img src="@\assets\icon\plane.png" style="width: 25px; margin: 0 10px 5px 5px;"  />
               <strong class="mb-1">{{ plan.title }}</strong>
             </div>
-            <small class="text-muted"> -</small>
+            
           </div>
           <div class="col-10 mb-1 small">{{ getDateFomr(plan.startDate) + " ~ " + getDateFomr(plan.endDate) }}</div>
+          <small class="text-muted" @click="removeTripPlanCall(plan.planId)" style="position: relative; top: 0"> Delete</small>
         </a>
       </div>
     </div>
@@ -80,6 +94,7 @@ const getDateFomr = (timestamp) => {
 #plan-list {
   width: 100%;
   height: 100%;
+  min-width: 290px;
 }
 
 </style>
