@@ -11,6 +11,11 @@ function createTripPlan(param, success, fail) {
   console.log("createPlan api 호출")
   attraction.post("/plan/", param).then(success).catch(fail);
 }
+
+function removeTripPlan(param, success, fail) {
+  console.log("removeTripPlan api 호출")
+  attraction.delete(`/plan/${param}`,).then(success).catch(fail);
+}
   
 function listPlanAttribute(param, success, fail) {
   // console.log("listPlan api 호출")
@@ -32,4 +37,4 @@ function ramoveTripPlanAttraction(param1, param2, success, fail) {
     attraction.delete(`/plan-att/${param1}/${param2}`).then(success).catch(fail);
 }
 
-export { listPlan, createTripPlan, listPlanAttribute, createTripPlanAttraction, listTripPlanAttraction, ramoveTripPlanAttraction };
+export { listPlan, createTripPlan, removeTripPlan, listPlanAttribute, createTripPlanAttraction, listTripPlanAttraction, ramoveTripPlanAttraction };
