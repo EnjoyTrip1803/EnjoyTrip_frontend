@@ -29,15 +29,10 @@ const onView = () => {
 </template>
 
 <style scoped>
-.card {
+img {
     width: 100%;
-    margin: 10px;
-}
-
-.img-wrapper {
-    position: relative;
-    width: 500px;
-    height: 500px;
+    height: 230px;
+    object-fit: cover;
 }
 
 .card>img {}
