@@ -7,7 +7,7 @@ import { listPlan } from "@/api/plan.js"
 
 
 const router = useRouter();
-// const { userInfo } = storeToRefs(useMemberStore());
+const { userInfo } = storeToRefs(useMemberStore());
 // const userId = ref(userInfo.value.userId);
 const userId = ref(5);
 const planList = ref([]);
@@ -40,24 +40,19 @@ const getPlanList = (userId) => {
 }
 
 const getDateFomr = (timestamp) => {
-  // Create a date object from a date string
   var date = new Date(timestamp);
 
-  // Get year, month, and day part from the date
   var year = date.toLocaleString("default", { year: "numeric" });
   var month = date.toLocaleString("default", { month: "2-digit" });
   var day = date.toLocaleString("default", { day: "2-digit" });
 
-  // Generate yyyy-mm-dd date string
   var formattedDate = year + " " + month + " " + day;
-  // console.log(formattedDate);  // Prints: 2022-05-04
   return formattedDate;
 }
 </script>
 
 <template>
-  <div id="plan-list">
-    <div class="justify-content-center" >
+    <div class="justify-content-center overflow-auto" id="plan-list">
       <a href="#"
         class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom justify-content-between">
         <div class="d-flex align-items-center">
@@ -79,14 +74,12 @@ const getDateFomr = (timestamp) => {
         </a>
       </div>
     </div>
-  </div>
 </template>
 
 <style scoped>
 #plan-list {
   width: 100%;
   height: 100%;
-
 }
 
 </style>

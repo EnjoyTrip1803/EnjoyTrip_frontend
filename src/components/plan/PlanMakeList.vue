@@ -1,237 +1,228 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import { listArea, listAttractions, listContentType } from "@/api/attraction";
-import type { SelectProps, TableColumnsType } from 'ant-design-vue';
-import { createTripPlanAttraction, listTripPlanAttraction, ramoveTripPlanAttraction } from '@/api/plan.js'
+import { createTripPlanAttraction, ramoveTripPlanAttraction } from '@/api/plan.js'
 
 import ASelect from '@/components/common/ASelect.vue';
 import VKakaoMap from '@/components/common/VKakaoMap.vue';
 
-// const { userId, planId, title } = history.state;
-const userId = 5;
-const planId = 10;
-const title = "it's a title";
 
-const sidoList = ref<SelectProps['options']>();
-const gugunList = ref<SelectProps['options']>([{ label: "구군선택", value: "" }]);
-const contentTypeList = ref<SelectProps['options']>();
+const props = defineProps({
+    mode: { type: String, default: 'map' },
+    planId: { type: Number, default: 10 },
+})
+
+const sidoList = ref();
+const gugunList = ref([{ label: "구군선택", value: "" }]);
+const contentTypeList = ref();
 const attractionList = ref([]);
-const planAttractionList = ref([]);
 const selectAttraction = ref({});
 
 const searchCondition = ref({
-    sidoCode: 1,
-    gugunCode: 1,
-    contentTypeId: 12,
-    word: ""
+  sidoCode: 1,
+  gugunCode: 1,
+  contentTypeId: 12,
+  word: ""
 });
 
 const planCondition = ref({
-    planId: planId,
-    contentId: 0,
+  planId: props.planId,
+  contentId: 0,
 });
 
-const tableCellWidth = 5;
-const columns: TableColumnsType = [
-    { title: 'Title', width: 2, dataIndex: 'title', key: 'name', fixed: "left" },
-    { title: 'Image', width: 2, dataIndex: 'firstImage', key: 'image' },
-    { title: 'Address', dataIndex: 'addr1', key: 'addr', width: tableCellWidth },
-    { title: 'Tel', dataIndex: 'tel', key: 'tel', width: tableCellWidth },
-    { title: 'Add', key: 'operation', fixed: 'right', width: 2 }
-];
 
 onMounted(() => {
-    getSidoList();
-    getContentTypeList();
-    getPlanList();
-    // console.log(planId)
-    // getAttractions();
+  getSidoList();
+  getContentTypeList();
 });
 
 
 const onChangeSido = (val) => {
-    searchCondition.value.sidoCode = val;
-    listArea(
-        val,
-        ({ data }) => {
-            let options = [];
-            options.push({ label: "구군선택", value: "" });
-            data.forEach((gugun) => {
-                options.push({ label: gugun.gugunName, value: gugun.gugunCode });
-            });
-            gugunList.value = options;
-        },
-        (err) => {
-            console.log(err);
-        }
-    );
-    // console.log(sidoList.value)
-    // console.log(gugunList.value)
+  searchCondition.value.sidoCode = val;
+  listArea(
+    val,
+    ({ data }) => {
+      let options = [];
+      options.push({ label: "구군선택", value: "" });
+      data.forEach((gugun) => {
+        options.push({ label: gugun.gugunName, value: gugun.gugunCode });
+      });
+      gugunList.value = options;
+    },
+    (err) => {
+      console.log(err);
+    }
+  );
+  // console.log(sidoList.value)
+  // console.log(gugunList.value)
 };
 
 const onChangeGugun = (val) => {
-    searchCondition.value.gugunCode = val;
+  searchCondition.value.gugunCode = val;
 };
 
 const onContentType = (val) => {
-    searchCondition.value.contentTypeId = val;
+  searchCondition.value.contentTypeId = val;
 };
 
 const getAttractions = () => {
-    listAttractions(
-        searchCondition.value,
-        ({ data }) => {
-            attractionList.value = data;
-            // console.log(attractionList.value);
-        },
-        (err) => {
-            console.log(err);
-        }
-    );
+  listAttractions(
+    searchCondition.value,
+    ({ data }) => {
+      attractionList.value = data;
+      // console.log(attractionList.value);
+    },
+    (err) => {
+      console.log(err);
+    }
+  );
 };
 
 
 const getSidoList = () => {
-    listArea(
-        0,
-        ({ data }) => {
-            // console.log(data)
-            let options = [];
-            options.push({ label: "시도선택", value: "" });
-            data.forEach((sido) => {
-                options.push({ label: sido.sidoName, value: sido.sidoCode });
-            });
-            sidoList.value = options;
-        },
-        (err) => {
-            console.log(err);
-        }
-    );
+  listArea(
+    0,
+    ({ data }) => {
+      // console.log(data)
+      let options = [];
+      options.push({ label: "시도선택", value: "" });
+      data.forEach((sido) => {
+        options.push({ label: sido.sidoName, value: sido.sidoCode });
+      });
+      sidoList.value = options;
+    },
+    (err) => {
+      console.log(err);
+    }
+  );
 };
 
 const getContentTypeList = () => {
-    listContentType(
-        ({ data }) => {
-            // console.log(data)
-            let options = [];
-            options.push({ label: "콘텐츠 타입 선택", value: "" });
-            data.forEach((type) => {
-                options.push({ label: type.contentTypeName, value: type.contentTypeId });
-            });
-            contentTypeList.value = options;
-        },
-        (err) => {
-            console.log(err);
-        }
-    );
+  listContentType(
+    ({ data }) => {
+      // console.log(data)
+      let options = [];
+      options.push({ label: "콘텐츠 타입 선택", value: "" });
+      data.forEach((type) => {
+        options.push({ label: type.contentTypeName, value: type.contentTypeId });
+      });
+      contentTypeList.value = options;
+    },
+    (err) => {
+      console.log(err);
+    }
+  );
 };
 
 
-const getPlanList = () => {
-    listTripPlanAttraction(
-        planId,
-        ({ data }) => {
-            // console.log(data)
-            planAttractionList.value = data;
-        },
-        (err) => {
-            console.log(err);
-        }
-    )
-    console.log("planAttractionList")
-    console.log(planAttractionList.value)
-}
 const viewAttraction = (attraction) => {
-    selectAttraction.value = attraction;
+  selectAttraction.value = attraction;
 };
 
 const addPlanAttraction = (contentId) => {
-    planCondition.value.contentId = contentId;
-    createTripPlanAttraction(
-        planCondition.value,
-        () => { getPlanList(); },
-        (err) => { console.log(err) }
-    )
+  planCondition.value.contentId = contentId;
+  createTripPlanAttraction(
+    planCondition.value,
+      () => { console.log("성공"); },
+      (err) => { console.log(err); }
+  )
 
 };
 
 const removePlanAttraction = (contentId) => {
-    planCondition.value.contentId = contentId;
-    ramoveTripPlanAttraction(
-        planCondition.value.planId,
-        planCondition.value.contentId,
-        () => { getPlanList(); },
-        (err) => { console.log(err) }
-    )
+  planCondition.value.contentId = contentId;
+  ramoveTripPlanAttraction(
+    planCondition.value.planId,
+    planCondition.value.contentId,
+      () => { console.log("성공"); },
+      (err) => { console.log(err); }
+  )
 };
-
-
 </script>
 
 <template>
-    <div class="row" id="map-container">
-        <div class="col-3" id="map-side">
-            <div id="search-condition">
-                <div>
-                    area
-                    <ASelect :selectOption="sidoList" @onKeySelect="onChangeSido" />
-                    <ASelect :selectOption="gugunList" @onKeySelect="onChangeGugun" />
-                </div>
-                <div>
-                    content
-                    <ASelect :selectOption="contentTypeList" @onKeySelect="onContentType" />
-                </div>
-                <div>
-                    word
-                    <a-input-search v-model:value="searchCondition.word" placeholder="input search text"
-                        @search="getAttractions" />
-                </div>
+  <div id="search-map-container">
+    <div class="overflow-auto" id="plan-list">
+      <div class="justify-content-center">
+        <a href="#"
+          class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom justify-content-between search-menu">
+          <div class="d-flex align-items-center">
+            <div class="search-condition">
+              <div class="d-flex align-items-center">
+                <!-- <logo_icon width="20px" height="20px" /> -->
+                <strong>SEARCH</strong>
+              </div>
+              <ASelect :selectOption="sidoList" @onKeySelect="onChangeSido" />
+              <ASelect :selectOption="gugunList" @onKeySelect="onChangeGugun" />
+              <ASelect :selectOption="contentTypeList" @onKeySelect="onContentType" />
+              <div>
+                <a-input-search v-model:value="searchCondition.word" placeholder="input search text"
+                  @search="getAttractions" />
+              </div>
             </div>
+          </div>
+        </a>
+        <div class="list-group list-group-flush border-bottom scrollarea" v-for="attraction in attractionList"
+          :key="attraction.contentId">
+          <a href="#" class="list-group-item list-group-item-action py-0 lh-tight" @click="viewAttraction(attraction)">
+            <div class="d-flex align-items-center" id="attraction-card">
+              <div v-if="attraction.firstImage === ''"> <!-- == 2개는 자바스크립트에서는 안돼요. === 3개로 써주세요. 아시겠어요???? -->
+                <div class="d-flex justify-content-center align-items-center" style="width: 130px; height: 100px;">
+                  <img src="@/assets/icon/image.png" :alt="`${attraction.title}`" height="70" width="70">
+                </div>
+              </div>
+              <div v-else>
+                <img :src="`${attraction.firstImage}`" :alt="`${attraction.title}`" width="130" height="100"
+                  style="border-radius: 2%;">
+              </div>
 
-            <div id="attraciton-list">
-                <a-table :columns="columns" :data-source="attractionList" :scroll="{ x: 1000, y: 500 }">
-                    <template #bodyCell="{ column, text, record }">
-                        <template v-if="column.dataIndex === 'title'">
-                            <a href="#" @click="viewAttraction(record)"> {{ text }}</a>
-                        </template>
-                        <template v-if="column.key === 'operation'">
-                            <a href="#" @click="addPlanAttraction(record.contentId)"> {{
-                                column.title }}</a>
-                        </template>
-                        <template v-if="column.key === 'image'">
-                            <img :src="`${text}`" />
-                        </template>
-                    </template>
-                </a-table>
+              <a href="#" class="list-group-item list-group-item-action py-3 lh-tight" style="border: none;">
+                <div class="d-flex align-items-center justify-content-between">
+                    <strong class="mb-1">{{ attraction.title }}</strong>
+                    <div v-if="!(props.planId==='')">
+                      <button type="button" class="btn btn-outline-primary btn-sm" @click="addPlanAttraction(attraction.contentId)">Add</button>
+                    </div>
+                </div>
+                <div class="col-10 mb-1 small">
+                  <div>{{ attraction.addr1 }}</div>
+                  <div v-if="!(attraction.tel === '')" class="d-flex align-items-center" style="margin-top: 15px;">
+                    <img src="@/assets/icon/phone-call.png" alt="call" height="14" width="14" style="margin-right: 7px;">
+                    {{ attraction.tel }}
+                  </div>  
+                </div>
+              </a>
             </div>
+          </a>
         </div>
-        <div class="col-6">
-            <VKakaoMap :attractions="attractionList" :selectAttraction="selectAttraction" />
-        </div>
+      </div>
     </div>
+
+    <div id="map">
+      <VKakaoMap :attractions="attractionList" :selectAttraction="selectAttraction" />
+    </div>
+
+  </div>
 </template>
 
-<style scoped>  
-#map-container {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-  }
+<style scoped>
+#search-map-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
 
-  #map-side {
-      background: #fff
-  }
+#plan-list {
+  min-width: 430px;
+}
 
-  img {
-      /* position: absolute; */
-      width: 100px;
-      height: 100px;
-      border-radius: 10%;
-  }
+#map {}
 
-  #attraciton-list {
-      width: 100%;
-      height: 100%;
-      /* background-color: antiquewhite; */
-  }
+#attraction-card {
+  margin: 0 0 0 5px;
+}
+
+.search-condition>* {
+  margin: 0 0 5px 5px;
+}
 </style>

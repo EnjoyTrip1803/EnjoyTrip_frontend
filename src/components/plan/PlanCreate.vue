@@ -1,12 +1,14 @@
 <script setup>
-import { ref } from 'vue';
 import { reactive } from 'vue';
 import { useRouter } from "vue-router";
 
 import { createTripPlan } from "@/api/plan";
 
+defineEmits(['changeMode'])
+
 const router = useRouter();
-const { userId } = history.state;
+// const { userId } = history.state;
+const userId = 5;
 
 const formState = reactive({
   title: ''
@@ -22,13 +24,31 @@ const rangeConfig = {
   ],
 };
 
+const formItemLayout = {
+  labelCol: {
+    span: 3,
+  },
+  wrapperCol: {
+    span: 12,
+  },
+};
+const formTailLayout = {
+  labelCol: {
+    span: 4,
+  },
+  wrapperCol: {
+    span: 8,
+    offset: 4,
+  },
+};
+
 const onFinish = values => {
   console.log('Success:', {
-      title: values["title"],
-      userId: userId,
-      startDate: Date.parse(values["date"][0]) / 1000,
-      endDate: Date.parse(values["date"][1]) / 1000,
-    });
+    title: values["title"],
+    userId: userId,
+    startDate: Date.parse(values["date"][0]) / 1000,
+    endDate: Date.parse(values["date"][1]) / 1000,
+  });
   createTripPlan(
     {
       title: values["title"],
@@ -36,12 +56,13 @@ const onFinish = values => {
       startDate: Date.parse(values["date"][0]) / 1000,
       endDate: Date.parse(values["date"][1]) / 1000,
     },
-      ({data}) => {
-        router.push({ name: "makeList", state: {userId: data.userId, planId: data.planId, title: data.title} });
-      },
-      (err) => {
-          console.log(err);
-      }
+    ({ data }) => {
+      $emit('change-mode', )
+      // router.push({ name: "makeList", state: { userId: data.userId, planId: data.planId, title: data.title } });
+    },
+    (err) => {
+      console.log(err);
+    }
   );
 };
 
@@ -52,30 +73,33 @@ const onFinishFailed = errorInfo => {
 </script>
 
 <template>
-  <a-form
-    :model="formState"
-    name="basic"
-    :label-col="{ span: 8 }"
-    :wrapper-col="{ span: 16 }"
-    autocomplete="off"
-    @finish="onFinish"
-    @finishFailed="onFinishFailed"
-  >
-    <a-form-item
-      label="Title"
-      name="title"
-      :rules="[{ required: true, message: 'Please input title!' }]"
-    >
-      <a-input v-model:value="formState.title" />
-    </a-form-item>
+  <div class="justify-content-center create-form-container">
+    <h3>Make Plan</h3>
+    <a-form ref="formRef" :model="formState" name="dynamic_rule" v-bind="formItemLayout" autocomplete="off"
+      @finish="onFinish" @finishFailed="onFinishFailed">
 
+      <a-form-item label="Title" name="title" :rules="[{ required: true, message: 'Please input title!' }]">
+        <a-input v-model:value="formState.title" />
+      </a-form-item>
 
-    <a-form-item name="date" label="Date" v-bind="rangeConfig">
-      <a-range-picker v-model:value="formState['date']" value-format="YYYY-MM-DD HH:MM:ss" />
-    </a-form-item>
+      <a-form-item name="date" label="Date" v-bind="rangeConfig">
+        <a-range-picker v-model:value="formState['date']" value-format="YYYY-MM-DD" />
+      </a-form-item>
 
-    <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-      <a-button type="primary" html-type="submit">Submit</a-button>
-    </a-form-item>
-  </a-form>
+      <a-form-item v-bind="formTailLayout">
+        <a-button type="primary" html-type="submit">Submit</a-button>
+      </a-form-item>
+    </a-form>
+  </div>
 </template>
+
+<style scoped>
+.create-form-container {
+  /* position: absolute; */
+  width: 100%;
+  height: 100%;
+  margin: 50px;
+}
+</style>
+
+
