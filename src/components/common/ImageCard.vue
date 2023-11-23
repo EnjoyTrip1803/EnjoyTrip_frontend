@@ -1,10 +1,14 @@
 <script setup>
+import { useRouter } from "vue-router";
+const router = useRouter();
+
 const props = defineProps({
     card: Object
 })
 
 const onPlan = () => {
     // 클릭시 계획 페이지로 이동하기(param으로 sidoCode 넘기기)
+    router.push({name: 'attraction', state: {sidoCode: props.card.sidoCode}})
 }
 </script>
 
