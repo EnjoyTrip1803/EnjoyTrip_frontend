@@ -28,11 +28,7 @@ const onlyAuthUser = async (to, from, next) => {
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [{
-    path: '/test',
-  name: 'test',
-  component: () => import("@/views/test.vue")
-  },
+  routes: [
     {
       path: '/',
       name: 'main',
@@ -45,26 +41,25 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('@/views/TheAttractionView.vue'),
-      redirect: { name: "select" },
       props: true,
-      children: [
-        {
-          path: "",
-          name: "select",
-          component: () => import("@/components/plan/PlanSelect.vue"),
-        },
-        {
-          path: "/make",
-          name: "makeList",
-          component: () => import("@/components/plan/PlanMakeList.vue"),
-        },
-        {
-          path: "/create",
-          name: "createPlan",
-          component: () => import("@/components/plan/PlanCreate.vue"),
-        },
+      // children: [
+      //   {
+      //     path: "/select",
+      //     name: "select",
+      //     component: () => import("@/components/plan/PlanSelect.vue"),
+      //   },
+      //   {
+      //     path: "/make",
+      //     name: "makeList",
+      //     component: () => import("@/components/plan/PlanMakeList.vue"),
+      //   },
+      //   {
+      //     path: "/create",
+      //     name: "createPlan",
+      //     component: () => import("@/components/plan/PlanCreate.vue"),
+      //   },
         
-      ]
+      // ]
     },
     {
       path: "/user",
