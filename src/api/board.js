@@ -23,8 +23,13 @@ function getModifyArticle(articleno, success, fail) {
   local.get(`/board/modify/${articleno}`).then(success).catch(fail);
 }
 
-function modifyArticle(article, success, fail) {
-  local.put(`/board`, JSON.stringify(article)).then(success).catch(fail);
+function modifyArticle(formData, success, fail) {
+  const config = {
+    headers: {
+        'Content-Type': 'multipart/form-data',
+    },
+};
+  local.put(`/board/modify`, formData, config).then(success).catch(fail);
 }
 
 function deleteArticle(articleno, success, fail) {

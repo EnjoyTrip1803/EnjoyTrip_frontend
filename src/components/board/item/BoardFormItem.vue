@@ -1,7 +1,11 @@
 <script setup>
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { registArticle, getModifyArticle, modifyArticle } from "@/api/board";
+import { registArticle, detailArticle, modifyArticle } from "@/api/board";
+import { storeToRefs } from "pinia";
+import { useMemberStore } from "@/stores/member.js"
+
+const { userInfo } = storeToRefs(useMemberStore());
 
 const router = useRouter();
 const route = useRoute();
@@ -14,7 +18,7 @@ const article = ref({
   articleNo: 0,
   subject: "",
   content: "",
-  userId: 1,
+  userId: userInfo.value.userId,
   userName: "",
   hit: 0,
   registerTime: ""
@@ -24,10 +28,12 @@ const file = ref('');
 if (props.type === "modify") {
   let { articleno } = route.params;
   console.log(articleno + "번글 얻어와서 수정할거야");
-  getModifyArticle(
+  detailArticle(
     articleno,
     ({ data }) => {
+      console.log(data)
       article.value = data;
+      console.log(article.value)
       isUseId.value = true;
     },
     (error) => {
@@ -102,8 +108,17 @@ function writeArticle() {
 
 function updateArticle() {
   console.log(article.value.articleNo + "번글 수정하자!!", article.value);
+
+  const formData = new FormData();
+  formData.append('articleNo', article.value.articleNo);
+  formData.append('userName', article.value.userName);
+  formData.append('subject', article.value.subject);
+  formData.append('content', article.value.content);
+  formData.append('userId', article.value.userId);
+  formData.append('upfile', file.value);
+
   modifyArticle(
-    article.value,
+    formData,
     (response) => {
       let msg = "글수정 처리시 문제 발생했습니다.";
       if (response.status == 200) msg = "글정보 수정이 완료되었습니다.";
