@@ -17,7 +17,7 @@ const onPlan = () => {
         <img class="card-img-top" :src="props.card.image" alt="Card image">
         <div class="card-body">
             <h4 class="card-title">{{ props.card.title }}</h4>
-            <p class="card-text">{{ props.card.info }}</p>
+            <!-- <p class="card-text">{{ props.card.info }}</p> -->
         </div>
     </div>
 </template>

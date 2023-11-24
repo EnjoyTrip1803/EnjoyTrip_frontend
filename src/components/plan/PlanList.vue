@@ -45,7 +45,7 @@ const getPlanList = () => {
 
 const getDateFomr = (timestamp) => {
   var date = new Date(timestamp);
-
+  console.log(timestamp, date);
   var year = date.toLocaleString("default", { year: "numeric" });
   var month = date.toLocaleString("default", { month: "2-digit" });
   var day = date.toLocaleString("default", { day: "2-digit" });

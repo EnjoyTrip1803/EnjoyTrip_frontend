@@ -42,7 +42,7 @@ onMounted(() => {
 const mountedKakaoMap = () => {
     if (props.sidoCode !== null) {
         searchCondition.value.sidoCode = props.sidoCode;
-        console.log(searchCondition.value)
+        console.log("searchCondition", searchCondition.value)
         getAttractions();
     }
 }
@@ -231,8 +231,10 @@ const removePlanAttraction = (contentId) => {
   min-width: 430px;
 }
 
-#map {}
-
+#map {
+  width: 100%;
+  height: 100%;
+}
 #attraction-card {
   margin: 0 0 0 5px;
 }

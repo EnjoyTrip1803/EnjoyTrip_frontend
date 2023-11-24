@@ -88,10 +88,10 @@ const getImg = () => {
               </p>
             </div>
           </div>
-          <div class="col-md-4 align-self-center text-end">댓글 : 17</div>
+          <div class="col-md-4 align-self-center text-end">댓글 : 0</div>
           <div class="divider mb-3">
 
-            <img v-if="article.fileInfo" class="att-img" :src="getImg()" alt="image" />
+            <img v-if="article.fileInfo" class="att-img" :src="getImg()" alt="image"/>
           </div>
           <div class="text-secondary h4 border-top">
             {{ article.content }}
@@ -116,6 +116,6 @@ const getImg = () => {
 
 <style scoped>
 .att-img {
-  width: 100%;
+  width: 30%;
 }
 </style>

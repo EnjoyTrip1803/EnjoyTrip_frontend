@@ -13,6 +13,10 @@ const props = defineProps({ attractions: Array, selectAttraction: Object });
 onMounted( () => {
   if (window.kakao && window.kakao.maps) {
     initMap();
+    (async () => {
+      await sleep(0.1); 
+      emit('mountedKakaoMap');
+      })();
   } else {
     // console.log("kakao.maps is not loaded============");
     const script = document.createElement("script");
@@ -46,8 +50,7 @@ watch(
       obj.latlng = new kakao.maps.LatLng(attraction.latitude, attraction.longitude);
       obj.content = `<div>
         <img src="${attraction.firstImage}" style="width=100px; height:100px">
-        <div> title: ${attraction.title} </div>       
-        <button>
+        <div> ${attraction.title} </div>       
         </div>`;
       obj.src = attraction.firstImage;
 

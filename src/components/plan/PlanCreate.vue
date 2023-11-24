@@ -42,18 +42,20 @@ const formTailLayout = {
 };
 
 const onFinish = values => {
-  console.log('Success:', {
-    title: values["title"],
-    userId: userId,
-    startDate: Date.parse(values["date"][0]) / 1000,
-    endDate: Date.parse(values["date"][1]) / 1000,
-  });
+  // console.log('Success:', {
+  //   title: values["title"],
+  //   userId: userId,
+  //   startDate: values["date"][0],
+  //   endDate: values["date"][1],
+  //   startDate2: new Date(values["date"][0]).getTime(),
+  //   endDate2: new Date(values["date"][1]).getTime(),
+  // });
   createTripPlan(
     {
       title: values["title"],
       userId: userId,
-      startDate: Date.parse(values["date"][0]) / 1000,
-      endDate: Date.parse(values["date"][1]) / 1000,
+      startDate: new Date(values["date"][0]).getTime(),
+      endDate: new Date(values["date"][1]).getTime(),
     },
     ({ data }) => {
       emit('changeMode', 'attraction', data.planId, data.title);
@@ -82,7 +84,7 @@ const onFinishFailed = errorInfo => {
       </a-form-item>
 
       <a-form-item name="date" label="Date" v-bind="rangeConfig">
-        <a-range-picker v-model:value="formState['date']" value-format="YYYY-MM-DD" />
+        <a-range-picker v-model:value="formState['date']" value-format="YYYY-MM-DD HH:mm:ss" />
       </a-form-item>
 
       <a-form-item v-bind="formTailLayout">
