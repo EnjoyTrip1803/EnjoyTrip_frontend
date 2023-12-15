@@ -2,12 +2,16 @@
 import { reactive } from 'vue';
 import { useRouter } from "vue-router";
 
+import { ref } from 'vue';
+import { storeToRefs } from "pinia";
+import { useMemberStore } from "@/stores/member.js"
 import { createTripPlan } from "@/api/plan";
 
 const emit = defineEmits(["changeMode"]);
 
-// const { userId } = history.state;
-const userId = 5;
+// const { userInfo } = storeToRefs(useMemberStore());
+// const userId = ref(userInfo.value.userId);
+const userId = ref(5);
 
 const formState = reactive({
   title: ''
@@ -53,7 +57,7 @@ const onFinish = values => {
   createTripPlan(
     {
       title: values["title"],
-      userId: userId,
+      userId: userId.value,
       startDate: new Date(values["date"][0]).getTime(),
       endDate: new Date(values["date"][1]).getTime(),
     },
