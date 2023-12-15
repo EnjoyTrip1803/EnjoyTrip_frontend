@@ -9,9 +9,9 @@ import VKakaoMap from '@/components/common/VKakaoMap.vue';
 const emit = defineEmits(['callGetAttractionList']);
 
 const props = defineProps({
-    mode:String,
-    planId: Number,
-    sidoCode: { type: Number, default: null},
+  mode: String,
+  planId: Number,
+  sidoCode: { type: Number, default: null },
 })
 
 const sidoList = ref();
@@ -34,17 +34,17 @@ const planCondition = ref({
 
 
 onMounted(() => {
-    getSidoList();
-    getContentTypeList();
-    
+  getSidoList();
+  getContentTypeList();
+
 });
 
 const mountedKakaoMap = () => {
-    if (props.sidoCode !== null) {
-        searchCondition.value.sidoCode = props.sidoCode;
-        console.log("searchCondition", searchCondition.value)
-        getAttractions();
-    }
+  if (props.sidoCode !== null) {
+    searchCondition.value.sidoCode = props.sidoCode;
+    console.log("searchCondition", searchCondition.value)
+    getAttractions();
+  }
 }
 
 const onChangeSido = (val) => {
@@ -130,16 +130,16 @@ const viewAttraction = (attraction) => {
 };
 
 const addPlanAttraction = (contentId) => {
-    planCondition.value.planId = props.planId;
-    planCondition.value.contentId = contentId;
+  planCondition.value.planId = props.planId;
+  planCondition.value.contentId = contentId;
   console.log(planCondition.value)
   createTripPlanAttraction(
     planCondition.value,
-      () => {
-          emit('callGetAttractionList');
-          console.log("성공");
-      },
-      (err) => { console.log(err); }
+    () => {
+      emit('callGetAttractionList', contentId);
+      console.log("성공");
+    },
+    (err) => { console.log(err); }
   )
 
 };
@@ -149,8 +149,8 @@ const removePlanAttraction = (contentId) => {
   ramoveTripPlanAttraction(
     planCondition.value.planId,
     planCondition.value.contentId,
-      () => { console.log("성공"); },
-      (err) => { console.log(err); }
+    () => { console.log("성공"); },
+    (err) => { console.log(err); }
   )
 };
 </script>
@@ -193,17 +193,18 @@ const removePlanAttraction = (contentId) => {
 
               <a href="#" class="list-group-item list-group-item-action py-3 lh-tight" style="border: none;">
                 <div class="d-flex align-items-center justify-content-between">
-                    <strong class="mb-1">{{ attraction.title }}</strong>
-                    <div v-if="props.mode==='attraction'">
-                      <button type="button" class="btn btn-outline-primary btn-sm" @click="addPlanAttraction(attraction.contentId)">Add</button>
-                    </div>
+                  <strong class="mb-1">{{ attraction.title }}</strong>
+                  <div v-if="props.mode === 'attraction'">
+                    <button type="button" class="btn btn-outline-primary btn-sm"
+                      @click="addPlanAttraction(attraction.contentId)">Add</button>
+                  </div>
                 </div>
                 <div class="col-10 mb-1 small">
                   <div>{{ attraction.addr1 }}</div>
                   <div v-if="!(attraction.tel === '')" class="d-flex align-items-center" style="margin-top: 15px;">
                     <img src="@/assets/icon/phone-call.png" alt="call" height="14" width="14" style="margin-right: 7px;">
                     {{ attraction.tel }}
-                  </div>  
+                  </div>
                 </div>
               </a>
             </div>
@@ -235,6 +236,7 @@ const removePlanAttraction = (contentId) => {
   width: 100%;
   height: 100%;
 }
+
 #attraction-card {
   margin: 0 0 0 5px;
 }

@@ -1,15 +1,14 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { createTripPlanAttraction, listTripPlanAttraction, ramoveTripPlanAttraction } from '@/api/plan.js'
+import { attractionInfo, createTripPlanAttraction, listTripPlanAttraction, ramoveTripPlanAttraction } from '@/api/plan.js'
 
-const emit = defineEmits(["changeMode"]);
+const emit = defineEmits(["changeMode", "planInit", "addPlan"]);
 
 const props = defineProps({
-    planId: { type: Number, default: 10 },
-    title: {type:String, default:'default title'}
+  planId: { type: Number, default: 10 },
+  title: { type: String, default: 'default title' },
+  planAttractionList: { type: Object, default: () => { } }
 })
-
-const planAttractionList = ref([]);
 
 onMounted(() => {
   getPlanList();
@@ -26,27 +25,30 @@ const getPlanList = () => {
     props.planId,
     ({ data }) => {
       // console.log(data)
-      planAttractionList.value = data;
+      emit('planInit', data);
+      // planAttractionList.value = data;
     },
     (err) => {
       console.log(err);
     }
   )
   console.log("planAttractionList")
-  console.log(planAttractionList.value)
 }
-
-defineExpose({ getPlanList });
 
 const addPlanAttraction = (contentId) => {
   planCondition.value.contentId = contentId;
-  createTripPlanAttraction(
-    planCondition.value,
-    () => { getPlanList(); },
-    (err) => { console.log(err) }
-  )
+  console.log("PlanAttractionList 40 Line ContentId = ", contentId);
 
+  attractionInfo(
+    contentId,
+    (res) => {
+      console.log("attractionInfo Test : ", res.data)
+      emit('addPlan', res.data);
+    },
+    (err) => { console.log(err); }
+  )
 };
+defineExpose({ addPlanAttraction });
 
 const removePlanAttraction = (contentId) => {
   planCondition.value.contentId = contentId;
@@ -67,12 +69,12 @@ const removePlanAttraction = (contentId) => {
       class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom justify-content-between">
       <div class="d-flex flex-column " style="width: 100%;">
         <div class="d-flex align-items-center justify-content-between">
-            <div>
-                <span class="fs-6 fw-semibold">your</span>
-            </div>
-            <div>
-                <img src="@/assets/icon/list.png" alt="list" height="25" width="25" @click="emit('changeMode', 'map')">
-            </div>
+          <div>
+            <span class="fs-6 fw-semibold">your</span>
+          </div>
+          <div>
+            <img src="@/assets/icon/list.png" alt="list" height="25" width="25" @click="emit('changeMode', 'map')">
+          </div>
         </div>
         <span class="fs-2 fw-semibold" style="">{{ props.title }}</span>
       </div>
@@ -82,7 +84,7 @@ const removePlanAttraction = (contentId) => {
       <div class="list-group list-group-flush border-bottom scrollarea" v-for="attraction in planAttractionList"
         :key="attraction.contentId">
         <a href="#" class="list-group-item list-group-item-action py-0 lh-tight" @click="viewAttraction(attraction)">
-          <div class="d-flex align-items-center" id="attraction-card" >
+          <div class="d-flex align-items-center" id="attraction-card">
             <div v-if="attraction.firstImage === ''"> <!-- == 2개는 자바스크립트에서는 안돼요. === 3개로 써주세요. 아시겠어요???? -->
               <div class="d-flex justify-content-center align-items-center" style="width: 130px; height: 100px;">
                 <img src="@/assets/icon/image.png" :alt="`${attraction.title}`" height="70" width="70">
@@ -112,9 +114,9 @@ const removePlanAttraction = (contentId) => {
       </div>
     </div>
     <div v-else>
-        <div class="d-flex justify-content-center" style="width: 300px; padding-top: 50px;">
-            <h5>no attraction</h5>
-        </div>
+      <div class="d-flex justify-content-center" style="width: 300px; padding-top: 50px;">
+        <h5>no attraction</h5>
+      </div>
     </div>
   </div>
 </template>

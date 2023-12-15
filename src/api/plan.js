@@ -2,6 +2,10 @@ import { attractionAxios } from "@/util/http-commons";
 
 const attraction = attractionAxios();
 
+function attractionInfo(param, success, fail) { // 단일 관광지 정보 조회
+  attraction.get(`/info/${param}`).then(success).catch(fail);
+}
+
 function listPlan(param, success, fail) {
   // console.log("listPlan api 호출")
     attraction.get(`/plan/list/${param}`).then(success).catch(fail);
@@ -37,4 +41,4 @@ function ramoveTripPlanAttraction(param1, param2, success, fail) {
     attraction.delete(`/plan-att/${param1}/${param2}`).then(success).catch(fail);
 }
 
-export { listPlan, createTripPlan, removeTripPlan, listPlanAttribute, createTripPlanAttraction, listTripPlanAttraction, ramoveTripPlanAttraction };
+export { attractionInfo, listPlan, createTripPlan, removeTripPlan, listPlanAttribute, createTripPlanAttraction, listTripPlanAttraction, ramoveTripPlanAttraction };
