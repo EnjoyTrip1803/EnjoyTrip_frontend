@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { attractionInfo, createTripPlanAttraction, listTripPlanAttraction, ramoveTripPlanAttraction } from '@/api/plan.js'
 
-const emit = defineEmits(["changeMode", "planInit", "addPlan"]);
+const emit = defineEmits(["changeMode", "planInit", "addPlan", "removePlan"]);
 
 const props = defineProps({
   planId: { type: Number, default: 10 },
@@ -37,12 +37,10 @@ const getPlanList = () => {
 
 const addPlanAttraction = (contentId) => {
   planCondition.value.contentId = contentId;
-  console.log("PlanAttractionList 40 Line ContentId = ", contentId);
 
   attractionInfo(
     contentId,
     (res) => {
-      console.log("attractionInfo Test : ", res.data)
       emit('addPlan', res.data);
     },
     (err) => { console.log(err); }
@@ -55,7 +53,9 @@ const removePlanAttraction = (contentId) => {
   ramoveTripPlanAttraction(
     planCondition.value.planId,
     planCondition.value.contentId,
-    () => { getPlanList(); },
+    () => {
+      emit('removePlan', planCondition.value);
+    },
     (err) => { console.log(err) }
   )
 };
@@ -83,7 +83,7 @@ const removePlanAttraction = (contentId) => {
     <div v-if="planAttractionList[0] != null">
       <div class="list-group list-group-flush border-bottom scrollarea" v-for="attraction in planAttractionList"
         :key="attraction.contentId">
-        <a href="#" class="list-group-item list-group-item-action py-0 lh-tight" @click="viewAttraction(attraction)">
+        <a href="#" class="list-group-item list-group-item-action py-0 lh-tight">
           <div class="d-flex align-items-center" id="attraction-card">
             <div v-if="attraction.firstImage === ''"> <!-- == 2개는 자바스크립트에서는 안돼요. === 3개로 써주세요. 아시겠어요???? -->
               <div class="d-flex justify-content-center align-items-center" style="width: 130px; height: 100px;">
