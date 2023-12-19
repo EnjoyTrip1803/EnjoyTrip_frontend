@@ -66,14 +66,24 @@ const connect = () => {
         let data = JSON.parse(res.body);
         if (data.type == 'plan') {
           if (data.action == 'insert') {
-            let isOn = false;
+            // let isOn = false;
+            // for (let i = 0; i < planAttractionList.value.length; i++) {
+            //   if (planAttractionList.value[i].contentId == data.contentId) {
+            //     isOn = true;
+            //     break;
+            //   }
+            // }
+            // if (!isOn)
+            planAttractionList.value.push(data);
+          }
+          else if (data.action == 'delete') {
+            console.log('TheAttractionView 80 line delete data : ', data);
             for (let i = 0; i < planAttractionList.value.length; i++) {
               if (planAttractionList.value[i].contentId == data.contentId) {
-                isOn = true;
+                planAttractionList.value.splice(i, 1);
                 break;
               }
             }
-            if (!isOn) planAttractionList.value.push(data);
           }
         }
 
@@ -126,13 +136,17 @@ const planInit = (data) => {
   console.log("planAttractionList test : ", planAttractionList.value);
 }
 
-/* plan에 여행지 추가시 planAttractionList에 추가 및 소켓 통신*/
+/* plan에 여행지 추가시 planAttractionList에 추가 및 소켓 통신 */
 const addPlan = (data) => {
   console.log("TheAttractionView 105line test : ", data);
-  planAttractionList.value.push(data);
   sendAttraction(data, 'insert');
 }
 
+/* plan에 여행지 제거시 planAttractionList에서 제거 및 소켓 통신 */
+const removePlan = (data) => {
+  console.log("TheAttractionView 138line test : ", data);
+  sendAttraction(data, 'delete')
+}
 </script>
 
 <template>
@@ -159,7 +173,7 @@ const addPlan = (data) => {
           </div>
           <div v-else-if="mode === 'attraction'" style="max-width: 400px;">
             <PlanAttractionList ref="planAttractionRef" @changeMode="changeMode" @planInit="planInit" @addPlan="addPlan"
-              :title="title" :planId="planId" :planAttractionList="planAttractionList" />
+              @removePlan="removePlan" :title="title" :planId="planId" :planAttractionList="planAttractionList" />
           </div>
 
         </div>
