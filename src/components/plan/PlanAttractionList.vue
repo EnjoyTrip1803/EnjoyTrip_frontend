@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { attractionInfo, createTripPlanAttraction, listTripPlanAttraction, ramoveTripPlanAttraction } from '@/api/plan.js'
+import { attractionInfo, listTripPlanAttraction, ramoveTripPlanAttraction } from '@/api/plan.js'
 
 const emit = defineEmits(["changeMode", "planInit", "addPlan", "removePlan"]);
 
@@ -32,7 +32,6 @@ const getPlanList = () => {
       console.log(err);
     }
   )
-  console.log("planAttractionList")
 }
 
 const addPlanAttraction = (contentId) => {

@@ -1,6 +1,5 @@
 <script setup>
 import { reactive } from 'vue';
-import { useRouter } from "vue-router";
 
 import { ref } from 'vue';
 import { storeToRefs } from "pinia";
@@ -9,9 +8,9 @@ import { createTripPlan } from "@/api/plan";
 
 const emit = defineEmits(["changeMode"]);
 
-// const { userInfo } = storeToRefs(useMemberStore());
-// const userId = ref(userInfo.value.userId);
-const userId = ref(5);
+const { userInfo } = storeToRefs(useMemberStore());
+const userId = ref(userInfo.value.userId);
+// const userId = ref(5);
 
 const formState = reactive({
   title: ''

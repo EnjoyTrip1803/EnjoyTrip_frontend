@@ -1,16 +1,14 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/stores/member.js"
 import { listPlan, removeTripPlan } from "@/api/plan.js"
 
 const emit = defineEmits(["changeMode"]);
 
-const router = useRouter();
-// const { userInfo } = storeToRefs(useMemberStore());
-// const userId = ref(userInfo.value.userId);
-const userId = ref(5);
+const { userInfo } = storeToRefs(useMemberStore());
+const userId = ref(userInfo.value.userId);
+// const userId = ref(5);
 const planList = ref([]);
 
 
@@ -45,7 +43,6 @@ const getPlanList = () => {
 
 const getDateFomr = (timestamp) => {
   var date = new Date(timestamp);
-  console.log(timestamp, date);
   var year = date.toLocaleString("default", { year: "numeric" });
   var month = date.toLocaleString("default", { month: "2-digit" });
   var day = date.toLocaleString("default", { day: "2-digit" });
@@ -55,7 +52,6 @@ const getDateFomr = (timestamp) => {
 }
 
 const removeTripPlanCall = (planId) => {
-  console.log(planId)
   removeTripPlan(
     planId,
     () => { getPlanList(); },
