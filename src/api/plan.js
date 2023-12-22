@@ -41,4 +41,8 @@ function ramoveTripPlanAttraction(param1, param2, success, fail) {
     attraction.delete(`/plan-att/${param1}/${param2}`).then(success).catch(fail);
 }
 
-export { attractionInfo, listPlan, createTripPlan, removeTripPlan, listPlanAttribute, createTripPlanAttraction, listTripPlanAttraction, ramoveTripPlanAttraction };
+function listPlanMember(param, success, fail) {
+  attraction.get(`plan-member/list/${param}`).then(success).catch(fail);
+}
+
+export { attractionInfo, listPlan, createTripPlan, removeTripPlan, listPlanAttribute, createTripPlanAttraction, listTripPlanAttraction, ramoveTripPlanAttraction, listPlanMember };

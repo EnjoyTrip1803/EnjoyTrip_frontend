@@ -12,7 +12,7 @@ const props = defineProps({
   mode: String,
   planId: Number,
   sidoCode: { type: Number, default: null },
-})
+});
 
 const sidoList = ref();
 const gugunList = ref([{ label: "구군선택", value: "" }]);
@@ -144,15 +144,6 @@ const addPlanAttraction = (contentId) => {
 
 };
 
-const removePlanAttraction = (contentId) => {
-  planCondition.value.contentId = contentId;
-  ramoveTripPlanAttraction(
-    planCondition.value.planId,
-    planCondition.value.contentId,
-    () => { console.log("성공"); },
-    (err) => { console.log(err); }
-  )
-};
 </script>
 
 <template>

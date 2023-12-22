@@ -1,7 +1,8 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onBeforeUnmount } from 'vue';
 import { useRouter } from 'vue-router';
-
+import { storeToRefs } from "pinia";
+import { useMemberStore } from "@/stores/member.js"
 
 import Stomp from 'webstomp-client';
 import SockJS from "sockjs-client/dist/sockjs";
@@ -9,18 +10,21 @@ import logo from '@/assets/logo/logo.vue';
 import PlanMakeList from "@/components/plan/PlanMakeList.vue";
 import PlanList from "@/components/plan/PlanList.vue";
 import PlanCreate from "../components/plan/PlanCreate.vue";
-import PlanAttractionList from "../components/plan/PlanAttractionList.vue";
+import PlanAttractionList from "@/components/plan/PlanAttractionList.vue";
+import ChatPanel from '../components/chat/ChatPanel.vue';
 
 const router = useRouter();
 
 const mode = ref('map');
 const planId = ref();
+const { userInfo } = storeToRefs(useMemberStore());
 const title = ref('default title')
 const sidoCode = history.state.sidoCode;
 const activeKey = ref('');
-
 const planAttractionRef = ref(null);
 const planAttractionList = ref([]);
+const msgData = ref([]);
+const activeMembers = ref([]);
 
 const moveMain = () => {
   router.push({ name: 'main' })
@@ -28,21 +32,18 @@ const moveMain = () => {
 
 const changeMode = (m, p, t) => {
   mode.value = m;
-  planId.value = p;
-  title.value = t;
-  console.log('planId : ', planId.value);
-  if (planId.value) {
-    connect();
-  }
-  else {
+  if (!p && stompClient && stompClient.connected) {
     disconnect();
   }
-  console.log('changeMode!!!!!!!!!')
-  console.log(mode.value, planId.value, title.value);
+  planId.value = p;
+  title.value = t;
+  if (p) {
+    connect();
+  }
+
 }
 
 const callGetAttractionList = (contentId) => {
-  console.log("TheAttractionView 45 Line ContentId = ", contentId);
   planAttractionRef.value.addPlanAttraction(contentId);
 }
 
@@ -53,10 +54,12 @@ const callGetAttractionList = (contentId) => {
 let stompClient = null;
 const connect = () => {
   const serverURL = 'http://localhost:80/ws';
-  console.log(serverURL);
   const socket = new SockJS(serverURL);
-  console.log(serverURL);
   stompClient = Stomp.over(socket);
+  var rooms = {
+    userId: userInfo.value.userId,
+    planId: planId.value
+  };
 
   stompClient.connect(
     {},
@@ -64,20 +67,18 @@ const connect = () => {
       console.log('소켓 연결 성공', frame);
       stompClient.subscribe('/topic/channel/' + planId.value, (res) => {
         let data = JSON.parse(res.body);
-        if (data.type == 'plan') {
+        if (data.type == 'plan') { // 여행 계획 메시지
           if (data.action == 'insert') {
-            // let isOn = false;
-            // for (let i = 0; i < planAttractionList.value.length; i++) {
-            //   if (planAttractionList.value[i].contentId == data.contentId) {
-            //     isOn = true;
-            //     break;
-            //   }
-            // }
-            // if (!isOn)
-            planAttractionList.value.push(data);
+            let isIn = false;
+            for (let i = 0; i < planAttractionList.value.length; i++) {
+              if (planAttractionList.value[i].contentId == data.contentId) {
+                isIn = true;
+                break;
+              }
+            }
+            if (!isIn) planAttractionList.value.push(data);
           }
           else if (data.action == 'delete') {
-            console.log('TheAttractionView 80 line delete data : ', data);
             for (let i = 0; i < planAttractionList.value.length; i++) {
               if (planAttractionList.value[i].contentId == data.contentId) {
                 planAttractionList.value.splice(i, 1);
@@ -86,9 +87,14 @@ const connect = () => {
             }
           }
         }
-
-        console.log('response test : ', data);
+        else if (data.type == 'chat') { // 채팅 메시지
+          msgData.value.push(data);
+        }
+        else if (data.type == 'room') {
+          activeMembers.value = data;
+        }
       });
+      stompClient.send("/app/enter", JSON.stringify(rooms), {}); // 접속 알림
     },
     (error) => {
       console.log('소켓 연결 실패', error);
@@ -96,10 +102,6 @@ const connect = () => {
   );
 };
 
-/* socket disconnect */
-const disconnect = () => {
-  if (stompClient) stompClient.disconnect(() => { stompClient = null; });
-};
 
 /* 여행지 추가/제거 Socket Send */
 const sendAttraction = (data, action) => {
@@ -122,7 +124,6 @@ const sendAttraction = (data, action) => {
       longitude: data.longitude,
       mlevel: data.mlevel
     };
-    console.log('message : ', msg);
     stompClient.send('/app/plan', JSON.stringify(msg), {});
   }
 };
@@ -133,19 +134,55 @@ const planInit = (data) => {
   data.forEach((item) => {
     planAttractionList.value.push(item);
   });
-  console.log("planAttractionList test : ", planAttractionList.value);
 }
 
 /* plan에 여행지 추가시 planAttractionList에 추가 및 소켓 통신 */
 const addPlan = (data) => {
-  console.log("TheAttractionView 105line test : ", data);
   sendAttraction(data, 'insert');
 }
 
 /* plan에 여행지 제거시 planAttractionList에서 제거 및 소켓 통신 */
 const removePlan = (data) => {
-  console.log("TheAttractionView 138line test : ", data);
   sendAttraction(data, 'delete')
+}
+
+/* chat에서 메시지 send */
+const sendMessage = (msg) => {
+  if (stompClient && stompClient.connected) {
+    const sendChatMsg = {
+      type: 'chat',
+      planId: planId.value,
+      userName: userInfo.value.userName,
+      message: msg
+    }
+    stompClient.send('/app/chat', JSON.stringify(sendChatMsg), {});
+  }
+}
+
+// 페이지가 닫힐 때 실행될 함수
+const sendDataOnUnload = (e) => {
+  // 서버에 데이터를 보내는 작업을 수행
+  disconnect();
+  // 커스텀 메시지 설정 (일부 브라우저에서 표시될 수 있음)
+  e.returnValue = '이 페이지를 떠나시겠습니까?';
+}
+
+// 페이지 종료시 이벤트 추가
+window.addEventListener('beforeunload', sendDataOnUnload);
+onBeforeUnmount(() => {
+  window.removeEventListener('beforeunload', sendDataOnUnload);
+  disconnect();
+});
+
+/* socket disconnect */
+const disconnect = () => {
+  var rooms = {
+    userId: userInfo.value.userId,
+    planId: planId.value
+  };
+
+  stompClient.send("/app/exit", JSON.stringify(rooms), {});
+  stompClient.disconnect();
 }
 </script>
 
@@ -178,12 +215,13 @@ const removePlan = (data) => {
 
         </div>
       </a-tab-pane>
-
       <div id="plan-make-container">
         <PlanMakeList @callGetAttractionList="callGetAttractionList" :mode="mode" :planId="planId" :sidoCode="sidoCode" />
       </div>
     </a-tabs>
   </div>
+  <ChatPanel v-if="planId" @sendNewMessage="sendMessage" :msgs="msgData" :planId="planId" :activeMembers="activeMembers">
+  </ChatPanel>
 </template>
 
 <style scoped>
