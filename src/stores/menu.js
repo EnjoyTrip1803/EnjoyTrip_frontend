@@ -8,12 +8,14 @@ export const useMenuStore = defineStore("menuStore", () => {
     { name: "Login", show: true, routeName: "user-login" },
     { name: "Info", show: false, routeName: "mypage" },
     { name: "Logout", show: false, routeName: "user-logout" },
+    { name: "invitation", show: false, routeName: "" },
   ]);
 
   const changeMenuState = () => {
     menuList.value[2].show = !menuList.value[2].show;
     menuList.value[3].show = !menuList.value[3].show;
     menuList.value[4].show = !menuList.value[4].show;
+    menuList.value[5].show = !menuList.value[5].show;
   };
   return {
     menuList,

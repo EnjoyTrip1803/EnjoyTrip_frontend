@@ -23,6 +23,16 @@ function userAxios() {
     return instance;
 }
 
+function invitationAxios() {
+  const instance = axios.create({
+      baseURL: import.meta.env.VITE_VUE_API_URL + "/invitation",
+      headers: {
+          "Content-Type": "application/json;charset=utf-8",
+      }
+  });
+  return instance;
+}
+
 // local vue api axios instance
 function localAxios() {
     const instance = axios.create({
@@ -98,4 +108,4 @@ function localAxios() {
   
 
 
-export { attractionAxios, userAxios, localAxios };
+export { attractionAxios, userAxios, invitationAxios, localAxios };
