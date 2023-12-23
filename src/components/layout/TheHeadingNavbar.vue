@@ -2,6 +2,7 @@
 import { useMenuStore } from "@/stores/menu";
 import { storeToRefs } from "pinia";
 import logo from '@/assets/logo/logo.vue';
+import invitationListModal from "@/components/invitation/invitationListModal.vue"
 
 
 const scrolling = (e) => {
@@ -65,15 +66,26 @@ const getTextColor = () => {
 
             <div class="d-flex" id="collapsibleNavbar">
                 <ul class="navbar-nav mb-2 me-lg-0" v-for="menu in menuList" :key="menu.name" v-if="props.menus">
-                    <li class="nav-item" v-if="menu.show">
+                    <li class="nav-item" v-if="menu.show && menu.name!='invitation'">
                         <router-link :to="{ name: menu.routeName }" class="nav-link" :class="getTextColor()">
                             <h4>{{ menu.name }}</h4>
                         </router-link>
+                    </li>
+
+                    <li class="nav-item" v-if="menu.show && menu.name=='invitation'">
+                       <img src="@/assets/icon/letter.png" alt="invitation" style="width: 25px; margin: 13px 20px;" data-bs-toggle="modal" data-bs-target="#myModal">
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
+
+    <!-- The Modal -->
+    <div class="modal" id="myModal">
+        <div class="modal-dialog">
+            <invitationListModal/>
+        </div>
+    </div>
 </template>
 
 <style scoped>
