@@ -4,14 +4,20 @@ import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import { useMemberStore } from "@/stores/member";
 import { useMenuStore } from "@/stores/menu";
+import { useInvitationStore } from "@/stores/invitationStore";
 
 const router = useRouter();
 
+// memberStore
 const memberStore = useMemberStore();
-
-const { isLogin } = storeToRefs(memberStore);
+const { isLogin, userInfo } = storeToRefs(memberStore);
 const { userLogin, getUserInfo } = memberStore;
 const { changeMenuState } = useMenuStore();
+
+// invitationStore
+const invitationStore = useInvitationStore();
+const { getInvitation } = invitationStore;
+
 
 const loginUser = ref({
     userEmail: "",
@@ -22,14 +28,23 @@ const login = async () => {
     await userLogin(loginUser.value);
     let token = sessionStorage.getItem("accessToken");
     if (isLogin.value) {
-        console.log("userLogin.vue ", isLogin)
         getUserInfo(token);
         changeMenuState();
+        
+        setTimeout(() => {
+            getInvitation(userInfo.value.userId);
+            // console.log("userInfo: ", userInfo.value)
+        }, 2000);
         router.push("/");
     } else {
         alert('로그인에 실패하였습니다.')
     }
 };
+
+function sleep(ms) {
+  const wakeUpTime = Date.now() + ms;
+  while (Date.now() < wakeUpTime) {}
+}
 </script>
 
 
