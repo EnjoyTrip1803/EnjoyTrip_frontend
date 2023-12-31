@@ -1,20 +1,32 @@
-import { invitationAxios } from "@/util/http-commons";
+import { attractionAxios } from "@/util/http-commons";
 
-const axios = invitationAxios();
+const axios = attractionAxios();
 
-function getInvitationByName(name, success, fail) {
+async function getInvitationByUserId(userId, success, fail) {
   console.log("getInvitationByName api 호출")
-  axios.get(`?name=${name}`).then(success).catch(fail);
+  await axios.get(`invitation/list/${userId}`).then(success).catch(fail);
 }
 
-function createInvitation(data, success, fail) {
+async function createInvitation(data, success, fail) {
     console.log("createInvitation api 호출")
-    axios.post("", data).then(success).catch(fail);
+    await axios.post("", data).then(success).catch(fail);
 }
   
-function deleteInvitation(id, success, fail) {
+async function deleteInvitation(planId, userId, success, fail) {
     console.log("deleteInvitation api 호출")
-    axios.delete("", id).then(success).catch(fail);
+    axios.delete(`/plan-member/${planId}/${userId}`,).then(success).catch(fail);
   }
+  
+async function registTripMember(userInfo, success, fail) { 
+  await axios.post(`/plan-member`, userInfo).then(success).catch(fail);
+}
 
-export { getInvitationByName, createInvitation, deleteInvitation};
+async function updateTripMemberStatus(data, success, fail) { 
+  await axios.post(`/plan-member/status`, data).then(success).catch(fail);
+}
+
+function findTripMember(planId, userId, success, fail) { 
+  axios.get(`/plan-member-find/${planId}/${userId}`,).then(success).catch(fail);
+}
+
+export { getInvitationByUserId, createInvitation, deleteInvitation, registTripMember, updateTripMemberStatus, findTripMember};

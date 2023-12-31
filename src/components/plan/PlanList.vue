@@ -1,9 +1,10 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/stores/member.js"
 import { listPlan, removeTripPlan } from "@/api/plan.js"
-
+import { findTripMember } from "@/api/invitation.js"
+import PlanAddUserModal from "@/components/plan/PlanAddUserModal.vue"
 const emit = defineEmits(["changeMode"]);
 
 const { userInfo } = storeToRefs(useMemberStore());
@@ -11,6 +12,7 @@ const userId = ref(userInfo.value.userId);
 // const userId = ref(5);
 const planList = ref([]);
 
+const targetPlanId = ref(5);
 
 onMounted(() => {
   getPlanList(userId.value);
@@ -58,6 +60,7 @@ const removeTripPlanCall = (planId) => {
     (err) => { console.log(err) }
   )
 }
+
 </script>
 
 <template>
@@ -72,19 +75,32 @@ const removeTripPlanCall = (planId) => {
     </a>
     <div class="list-group list-group-flush border-bottom scrollarea" v-for="plan in planList" :key="plan.planId">
       <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">
-        <div class="d-flex w-100 align-items-center justify-content-between" @click="movePlan(plan.planId, plan.title)">
-          <div class="d-flex align-items-center">
-            <img src="@\assets\icon\plane.png" style="width: 25px; margin: 0 10px 5px 5px;" />
-            <strong class="mb-1">{{ plan.title }}</strong>
+        <div class="d-flex justify-content-around">
+          <div>
+            <div class="d-flex w-100 align-items-center justify-content-between" @click="movePlan(plan.planId, plan.title)">
+              <div class="d-flex align-items-center">
+                <img src="@\assets\icon\plane.png" style="width: 25px; margin: 0 10px 5px 5px;" />
+                <strong class="mb-1">{{ plan.title }}</strong>
+              </div>
+            </div>
+            <div class="mb-1 small">{{ getDateFomr(plan.startDate) + " ~ " + getDateFomr(plan.endDate) }}</div>
+            <small v-if="plan.userId==userInfo.userId" class="text-muted" @click="removeTripPlanCall(plan.planId)" style="position: relative; top: 0">
+              Delete</small>
           </div>
-
+          <div v-if="plan.userId==userInfo.userId" @click="targetPlanId=plan.planId" data-bs-toggle="modal" data-bs-target="#myModal">
+            <img src="@\assets\icon\add-user.png" style="width: 19px; margin: 0 10px 5px 5px;" />
+          </div>
+          <div v-else style="width: 35px;"></div>
         </div>
-        <div class="col-10 mb-1 small">{{ getDateFomr(plan.startDate) + " ~ " + getDateFomr(plan.endDate) }}</div>
-        <small class="text-muted" @click="removeTripPlanCall(plan.planId)" style="position: relative; top: 0">
-          Delete</small>
       </a>
     </div>
   </div>
+
+  <div class="modal" id="myModal">
+        <div class="modal-dialog">
+            <PlanAddUserModal :planId="targetPlanId"/>
+        </div>
+    </div>
 </template>
 
 <style scoped>
